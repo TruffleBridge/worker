@@ -159,9 +159,9 @@ part 'login_event.dart';
 part 'login_state.dart';
 
 class WorkerLoginBloc extends Bloc<WorkerLoginEvent, WorkerLoginState> {
-  final LoginRepository _loginRepository;
+  final LoginRepository loginRepository;
 
-  WorkerLoginBloc({required this._loginRepository}) : super(WorkerLoginState()) {
+  WorkerLoginBloc({required this.loginRepository}) : super(WorkerLoginState()) {
     on<LoginOnLoadEvent>(_onLoginOnLoadEvent);
     on<LoginEmailChanged>(_onEmailChanged);
     on<LoginPasswordChanged>(_onPasswordChanged);
@@ -230,7 +230,7 @@ class WorkerLoginBloc extends Bloc<WorkerLoginEvent, WorkerLoginState> {
     emit(castState.copyWith(status: LoginStatus.loading, errorMessage: null));
 
     try {
-      final UserModel user = await _loginRepository.loginResponseModel(
+      final UserModel user = await loginRepository.loginResponseModel(
         userName: castState.email,
         password: castState.password,
       );

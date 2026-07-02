@@ -9,12 +9,12 @@ part 'onboarding_event.dart';
 part 'onboarding_state.dart';
 
 class OnboardingBloc extends Bloc<OnboardingEvent, OnboardingState> {
-  final GetOnboardingItemsUseCase _getOnboardingItemsUseCase;
-  final MarkOnboardingAsSeenUseCase _markOnboardingAsSeenUseCase;
+  final GetOnboardingItemsUseCase getOnboardingItemsUseCase;
+  final MarkOnboardingAsSeenUseCase markOnboardingAsSeenUseCase;
 
   OnboardingBloc({
-    required this._getOnboardingItemsUseCase,
-    required this._markOnboardingAsSeenUseCase,
+    required this.getOnboardingItemsUseCase,
+    required this.markOnboardingAsSeenUseCase,
   }) : super(const OnboardingInitial()) {
     on<OnboardingStarted>(_onStarted);
     on<OnboardingPageChanged>(_onPageChanged);
@@ -28,7 +28,7 @@ class OnboardingBloc extends Bloc<OnboardingEvent, OnboardingState> {
     Emitter<OnboardingState> emit,
   ) async {
     emit(const OnboardingLoading());
-    final result = await _getOnboardingItemsUseCase(NoParams());
+    final result = await getOnboardingItemsUseCase(NoParams());
     result.fold(
       (failure) => emit(OnboardingError(message: failure.message)),
       (items) => emit(
@@ -91,7 +91,7 @@ class OnboardingBloc extends Bloc<OnboardingEvent, OnboardingState> {
       OnboardingSkipPressed event,
       Emitter<OnboardingState> emit,
       ) async {
-    final result = await _markOnboardingAsSeenUseCase(NoParams());
+    final result = await markOnboardingAsSeenUseCase(NoParams());
 
     result.fold(
           (failure) => emit(OnboardingError(message: failure.message)),
@@ -103,7 +103,7 @@ class OnboardingBloc extends Bloc<OnboardingEvent, OnboardingState> {
       OnboardingGetStartedPressed event,
       Emitter<OnboardingState> emit,
       ) async {
-    final result = await _markOnboardingAsSeenUseCase(NoParams());
+    final result = await markOnboardingAsSeenUseCase(NoParams());
 
     result.fold(
           (failure) => emit(OnboardingError(message: failure.message)),

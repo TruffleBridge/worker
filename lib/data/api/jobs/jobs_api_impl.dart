@@ -6,16 +6,16 @@ import 'package:nimora_worker/domain/model/response/job_detail_response_model.da
 import 'package:nimora_worker/domain/model/response/jobs_nearby_response_model.dart';
 
 class JobsApiImpl extends JobsApi {
-  final Dio _dio;
+  final Dio dio;
 
-  JobsApiImpl({required this._dio});
+  JobsApiImpl({required this.dio});
 
   @override
   Future<JobsNearbyResponseModel> jobsRequest({
     required JobsNearbyRequestModel jobsNearbyRequestModel,
   }) async {
     try {
-      final response = await _dio.post(
+      final response = await dio.post(
         '/api/job/jobsNearby',
         data: jobsNearbyRequestModel.toJson(),
       );
@@ -35,7 +35,7 @@ class JobsApiImpl extends JobsApi {
     required double longitude,
   }) async {
     try {
-      final response = await _dio.post(
+      final response = await dio.post(
         '/api/job/viewJobDetail',
         data: {'jobId': jobId, 'latitude': latitude, 'longitude': longitude},
       );
@@ -51,7 +51,7 @@ class JobsApiImpl extends JobsApi {
   @override
   Future<JobAppliedResponseModel> jobAppliedSubmit({required int jobId}) async {
     try {
-      final response = await _dio.post(
+      final response = await dio.post(
         '/api/job/applyJob',
         data: {'jobId': jobId},
       );

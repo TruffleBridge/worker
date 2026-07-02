@@ -10,12 +10,12 @@ part 'splash_event.dart';
 part 'splash_state.dart';
 
 class ClientSplashBloc extends Bloc<ClientSplashEvent, ClientSplashState> {
-  final HasSeenOnboardingUseCase _hasSeenOnboardingUseCase;
-  final TokenStorage _tokenStorage;
+  final HasSeenOnboardingUseCase hasSeenOnboardingUseCase;
+  final TokenStorage tokenStorage;
 
   ClientSplashBloc({
-    required this._hasSeenOnboardingUseCase,
-    required this._tokenStorage,
+    required this.hasSeenOnboardingUseCase,
+    required this.tokenStorage,
   })  : super(const ClientSplashInitial()) {
     on<ClientSplashStarted>(_onStarted);
   }
@@ -30,7 +30,7 @@ class ClientSplashBloc extends Bloc<ClientSplashEvent, ClientSplashState> {
     await Future.delayed(const Duration(seconds: 2));
 
     // ── Check if user is already logged in ──────────────────────────────────
-    final token = await _tokenStorage.readToken();
+    final token = await tokenStorage.readToken();
     debugPrint('=== SPLASH: token from storage: $token');
     if (token != null && token.isNotEmpty) {
       debugPrint('=== SPLASH: navigating to HOME ✅');
@@ -39,7 +39,7 @@ class ClientSplashBloc extends Bloc<ClientSplashEvent, ClientSplashState> {
     }
 
     // ── No token → check if onboarding has been seen ────────────────────────
-    final result = await _hasSeenOnboardingUseCase(NoParams());
+    final result = await hasSeenOnboardingUseCase(NoParams());
     result.fold(
           (_) => emit(const ClientSplashNavigateToOnboarding()),
           (hasSeen) {

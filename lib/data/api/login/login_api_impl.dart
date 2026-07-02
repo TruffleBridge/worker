@@ -5,12 +5,12 @@ import 'package:nimora_worker/domain/model/response/user_model.dart';
 import 'package:nimora_worker/infrastructure/storage/token_storage/token_storage.dart';
 
 class LoginApiImpl extends LoginApi {
-  final Dio _dio;
-  final TokenStorage _tokenStorage;
+  final Dio dio;
+  final TokenStorage tokenStorage;
 
   LoginApiImpl({
-    required this._dio,
-    required this._tokenStorage,
+    required this.dio,
+    required this.tokenStorage,
   });
 
   @override
@@ -19,7 +19,7 @@ class LoginApiImpl extends LoginApi {
     required String password,
   }) async {
     try {
-      final response = await _dio.post(
+      final response = await dio.post(
         '/api/auth/login',
         data: {
           'email': userName,
@@ -37,7 +37,7 @@ class LoginApiImpl extends LoginApi {
               body['accessToken'];
 
       if (token != null) {
-        await _tokenStorage.saveToken(token.toString());
+        await tokenStorage.saveToken(token.toString());
       }
 
       debugPrint('Login Response => $body');
