@@ -1,0 +1,4 @@
+enum UserRole {
+  client,
+  worker,
+}
