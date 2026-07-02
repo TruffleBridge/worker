@@ -1,0 +1,1 @@
+enum JobStatus { none, inReview, approved, completed }
