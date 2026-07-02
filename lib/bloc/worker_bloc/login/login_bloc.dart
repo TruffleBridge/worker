@@ -163,10 +163,7 @@ class WorkerLoginBloc extends Bloc<WorkerLoginEvent, WorkerLoginState> {
   final LoginRepository loginRepository;
   final TokenStorage tokenStorage;
 
-  WorkerLoginBloc({
-    required this.loginRepository,
-    required this.tokenStorage,
-  })  : super(WorkerLoginState()) {
+  WorkerLoginBloc({required this.loginRepository, required this.tokenStorage,}) : super(WorkerLoginState()) {
     on<LoginOnLoadEvent>(_onLoginOnLoadEvent);
     on<LoginEmailChanged>(_onEmailChanged);
     on<LoginPasswordChanged>(_onPasswordChanged);
