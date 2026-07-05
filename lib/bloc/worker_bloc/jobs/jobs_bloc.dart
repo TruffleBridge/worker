@@ -14,9 +14,9 @@ part 'jobs_event.dart';
 part 'jobs_state.dart';
 
 class JobsBloc extends Bloc<JobsEvent, JobsState> {
-  final JobsRepository _jobsRepository;
+  final JobsRepository jobsRepository;
 
-  JobsBloc({required this._jobsRepository}) : super(JobsInitial()) {
+  JobsBloc({required this.jobsRepository}) : super(JobsInitial()) {
     on<JobsOnLoadedEvent>(_onLoaded);
     on<JobsSearchChanged>(_onSearchChanged);
     on<JobSaveToggled>(_onSaveToggled);
@@ -33,7 +33,7 @@ class JobsBloc extends Bloc<JobsEvent, JobsState> {
     emit(const JobsLoading());
 
     try {
-      final response = await _jobsRepository.jobsRequest(
+      final response = await jobsRepository.jobsRequest(
         jobsNearbyRequestModel: JobsNearbyRequestModel(
           page: 1,
           limit: 10,
@@ -123,7 +123,7 @@ class JobsBloc extends Bloc<JobsEvent, JobsState> {
     emit(const JobDetailLoading());
 
     try {
-      final response = await _jobsRepository.jobDetailRequest(
+      final response = await jobsRepository.jobDetailRequest(
         jobId: int.parse(event.jobId),
         latitude: event.latitude,
         longitude: event.longitude,
@@ -148,7 +148,7 @@ class JobsBloc extends Bloc<JobsEvent, JobsState> {
     emit(const JobAppliedLoadingState());
 
     try {
-      final response = await _jobsRepository.jobAppliedSubmit(
+      final response = await jobsRepository.jobAppliedSubmit(
         jobId: event.jobId,
       );
 

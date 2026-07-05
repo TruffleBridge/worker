@@ -74,9 +74,9 @@ class MessagesError extends MessagesState {
 // ── BLoC ──────────────────────────────────────────────────────────────────────
 
 class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
-  final MessagesDataSource _dataSource;
+  final MessagesDataSource dataSource;
 
-  MessagesBloc({required this._dataSource})
+  MessagesBloc({required this.dataSource})
       : super(const MessagesInitial()) {
     on<MessagesLoaded>(_onLoaded);
     on<MessagesSearchChanged>(_onSearchChanged);
@@ -86,7 +86,7 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
       MessagesLoaded e, Emitter<MessagesState> emit) async {
     emit(const MessagesLoading());
     try {
-      final convs = await _dataSource.getConversations();
+      final convs = await dataSource.getConversations();
       emit(MessagesSuccess(conversations: convs, filtered: convs));
     } catch (e) {
       emit(MessagesError(e.toString()));

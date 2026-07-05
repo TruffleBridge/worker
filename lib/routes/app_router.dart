@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:nimora_worker/presentation/pages/client_pages/home/client_home_shell.dart';
+import 'package:nimora_worker/presentation/pages/client_pages/job_post/job_post_page.dart';
 import 'package:nimora_worker/presentation/pages/client_pages/login/login_page.dart';
 import 'package:nimora_worker/presentation/pages/client_pages/sign_in/sign_in_splash_page.dart';
 import 'package:nimora_worker/presentation/pages/client_pages/worker_details/worker_detail_page.dart';
@@ -60,6 +61,7 @@ abstract class AppRoutes {
   static const String clientLogin = '/client-login';
   static const String clientOtpScreen = '/client-otp-screen';
   static const String clientHome = '/client-home';
+  static const String clientJobPost = '/job-post';
   static const String workerDetail = '/client-worker-detail';
 }
 
@@ -340,6 +342,15 @@ final GoRouter appRouter = GoRouter(
       pageBuilder: (context, state) => CustomTransitionPage(
         key: state.pageKey,
         child: const ClientHomeShellPage(),
+        transitionsBuilder: _fadeTransition,
+      ),
+    ),
+    GoRoute(
+      path: AppRoutes.clientJobPost,
+      name: 'clientJobPost',
+      pageBuilder: (context, state) => CustomTransitionPage(
+        key: state.pageKey,
+        child: const JobPostPage(),
         transitionsBuilder: _fadeTransition,
       ),
     ),
