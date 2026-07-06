@@ -41,7 +41,6 @@ class _ClientHomeShellPageState extends State<ClientHomeShellPage> {
           });
         },
         onAddTap: () {
-          Navigator.of(context).pop();
           context.go(AppRoutes.clientJobPost);
         },
       ),
