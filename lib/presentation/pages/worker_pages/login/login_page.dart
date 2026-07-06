@@ -16,13 +16,12 @@ class LoginPage extends StatelessWidget {
       tokenStorage: AppDependencies.tokenStorage,
     );
 
-    final loginRepository = LoginRepositoryImpl(
-      loginApi: loginApi,
-    );
+    final loginRepository = LoginRepositoryImpl(loginApi: loginApi);
 
     return BlocProvider(
       create: (_) => WorkerLoginBloc(
         loginRepository: loginRepository,
+        tokenStorage: AppDependencies.tokenStorage,
       )..add(LoginOnLoadEvent()),
       child: const LoginView(),
     );

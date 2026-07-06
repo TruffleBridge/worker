@@ -153,6 +153,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nimora_worker/domain/repositories/login/login_repository.dart';
 import 'package:nimora_worker/domain/model/response/user_model.dart';
+import 'package:nimora_worker/infrastructure/storage/token_storage/token_storage.dart';
 
 part 'login_event.dart';
 
@@ -160,8 +161,12 @@ part 'login_state.dart';
 
 class WorkerLoginBloc extends Bloc<WorkerLoginEvent, WorkerLoginState> {
   final LoginRepository loginRepository;
+  final TokenStorage tokenStorage;
 
-  WorkerLoginBloc({required this.loginRepository}) : super(WorkerLoginState()) {
+  WorkerLoginBloc({
+    required this.loginRepository,
+    required this.tokenStorage,
+  })  : super(WorkerLoginState()) {
     on<LoginOnLoadEvent>(_onLoginOnLoadEvent);
     on<LoginEmailChanged>(_onEmailChanged);
     on<LoginPasswordChanged>(_onPasswordChanged);
@@ -234,6 +239,12 @@ class WorkerLoginBloc extends Bloc<WorkerLoginEvent, WorkerLoginState> {
         userName: castState.email,
         password: castState.password,
       );
+
+      final accessToken = user.data?.accessToken ?? '';
+
+      if (accessToken.isNotEmpty) {
+        await tokenStorage.saveToken(accessToken);
+      }
 
       emit(
         castState.copyWith(

@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:nimora_worker/bloc/worker_bloc/jobs/jobs_bloc.dart';
 import 'package:nimora_worker/core/constants/nimora_colors.dart';
 import 'package:nimora_worker/core/enums/job_badge.dart';
 import 'package:nimora_worker/core/utils/string_extensions.dart';
 import 'package:nimora_worker/domain/model/response/job_detail_response_model.dart';
-import 'package:nimora_worker/domain/model/view_model/job.dart';
 import 'package:nimora_worker/routes/app_router.dart';
 import '../../../../core/theme/app_theme.dart';
 
@@ -18,340 +19,338 @@ class JobDetailPage extends StatefulWidget {
 }
 
 class _JobDetailPageState extends State<JobDetailPage> {
-  bool _applied = false;
-
   @override
   Widget build(BuildContext context) {
-    final job = widget.job;
-    // List<JobBadge> _getBadges(JobDetailResponseModel job) {
-    //   final badges = <JobBadge>[];
-    //
-    //   final category = job.data?.job?.category?.toLowerCase() ?? '';
-    //
-    //   if (category.contains('ndis')) {
-    //     badges.add(JobBadge.ndis);
-    //   }
-    //
-    //   if (category.contains('aged')) {
-    //     badges.add(JobBadge.agedCare);
-    //   }
-    //
-    //   if (category.contains('disability')) {
-    //     badges.add(JobBadge.disability);
-    //   }
-    //
-    //   if (category.contains('mental')) {
-    //     badges.add(JobBadge.mentalHealth);
-    //   }
-    //
-    //   return badges;
-    // }
+    return BlocConsumer<JobsBloc, JobsState>(
+      listener: (context, state) {
+        if (state is JobAppliedSuccessState) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Job applied successfully'),
+            ),
+          );
+        } else if (state is JobAppliedErrorState) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.message),
+              backgroundColor: Colors.redAccent,
+            ),
+          );
+        }
+      },
+      builder: (context, state) {
+        JobDetailResponseModel job = widget.job;
 
-    // final badges = _getBadges(job);
-    final category = job.data?.job?.category ?? '';
-    return Scaffold(
-      backgroundColor: AppColors.white,
-      appBar: AppBar(
-        backgroundColor: const Color(0xFFE0E0E0),
-        elevation: 0,
-        surfaceTintColor: Colors.white,
-        leadingWidth: 72,
-        leading: Padding(
-          padding: const EdgeInsets.only(left: 20, top: 8, bottom: 8),
-          child: GestureDetector(
-            onTap: () {
-              context.push(AppRoutes.home);
-            },
-            child: Container(
-              decoration: const BoxDecoration(
-                color: Color(0xFFF3F4F6),
-                shape: BoxShape.circle,
+        if (state is JobsDetailsOnLoadedState) {
+          job = state.response;
+        } else if (state is JobAppliedLoadingState) {
+          job = state.jobDetail;
+        } else if (state is JobAppliedSuccessState) {
+          job = state.jobDetail;
+        } else if (state is JobAppliedErrorState) {
+          job = state.jobDetail;
+        }
+
+        final bool isApplying = state is JobAppliedLoadingState;
+        final bool isApplied = state is JobAppliedSuccessState;
+
+        final category = job.data?.job?.category ?? '';
+
+        return Scaffold(
+          backgroundColor: AppColors.white,
+          appBar: AppBar(
+            backgroundColor: const Color(0xFFE0E0E0),
+            elevation: 0,
+            surfaceTintColor: Colors.white,
+            leadingWidth: 72,
+            leading: Padding(
+              padding: const EdgeInsets.only(left: 20, top: 8, bottom: 8),
+              child: GestureDetector(
+                onTap: () {
+                  context.push(AppRoutes.home);
+                },
+                child: Container(
+                  decoration: const BoxDecoration(
+                    color: Color(0xFFF3F4F6),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.arrow_back_ios_new_rounded,
+                    size: 18,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
               ),
-              child: const Icon(
-                Icons.arrow_back_ios_new_rounded,
-                size: 18,
+            ),
+            title: Text(
+              'Jobs',
+              style: NdisThemeStyle.displayLarge.copyWith(
+                fontSize: 22,
+                fontWeight: FontWeight.w700,
                 color: AppColors.textPrimary,
               ),
             ),
-          ),
-        ),
-
-        title: Text(
-          'Jobs',
-          style: NdisThemeStyle.displayLarge.copyWith(
-            fontSize: 22,
-            fontWeight: FontWeight.w700,
-            color: AppColors.textPrimary,
-          ),
-        ),
-
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 20, top: 8, bottom: 8),
-            child: GestureDetector(
-              onTap: () {},
-              child: const SizedBox(
-                width: 42,
-                height: 42,
-                child: Icon(
-                  Icons.share_outlined,
-                  size: 20,
-                  color: AppColors.textPrimary,
+            actions: [
+              Padding(
+                padding: const EdgeInsets.only(right: 20, top: 8, bottom: 8),
+                child: GestureDetector(
+                  onTap: () {},
+                  child: const SizedBox(
+                    width: 42,
+                    height: 42,
+                    child: Icon(
+                      Icons.share_outlined,
+                      size: 20,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
                 ),
               ),
-            ),
+            ],
           ),
-        ],
-      ),
-      body: Column(
-        children: [
-          // BODY
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
+          body: Column(
+            children: [
+              // BODY
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      if (category.isNotEmpty)
-                        Wrap(
-                          spacing: 8,
+                      Row(
+                        children: [
+                          if (category.isNotEmpty)
+                            Wrap(
+                              spacing: 8,
+                              children: [
+                                _BadgeChip(
+                                  label: category,
+                                  color: NimoraColors.jobBadgeDefaultColor,
+                                ),
+                              ],
+                            ),
+                          const Spacer(),
+                          Text(
+                            '\$${job.data?.job?.hourlyRate?.toStringAsFixed(2)}/hr',
+                            style: const TextStyle(
+                              color: NimoraColors.hourlyRateColor,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w800,
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      const SizedBox(height: 16),
+
+                      Text(
+                        'Job #: ${job.data?.job?.id}',
+                        style: TextStyle(
+                          color: Colors.grey.shade500,
+                          fontSize: 12,
+                        ),
+                      ),
+
+                      const SizedBox(height: 6),
+
+                      Text(
+                        job.data?.job?.title ?? '',
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
+                          color: NimoraColors.titleColor,
+                        ),
+                      ),
+
+                      const SizedBox(height: 16),
+
+                      _metaRow(
+                        Icons.location_on_outlined,
+                        '${job.data?.location?.first.city},${job.data?.location?.first.state} • ${job.data?.location?.first.distanceKm} away',
+                      ),
+
+                      const SizedBox(height: 10),
+
+                      Row(
+                        children: [
+                          _metaRow(
+                            Icons.schedule_outlined,
+                            'Posted ${getPostedAgo(job.data?.job?.createdAt)}',
+                          ),
+                          const SizedBox(width: 16),
+                          _metaRow(
+                            Icons.people_outline_rounded,
+                            '${job.data?.job?.applicationCount} applications',
+                            color: NimoraColors.applicantsColor,
+                          ),
+                        ],
+                      ),
+
+                      const SizedBox(height: 28),
+
+                      const Text(
+                        'Client Information',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: NimoraColors.titleColor,
+                        ),
+                      ),
+
+                      const SizedBox(height: 14),
+
+                      _ClientCard(job: job),
+
+                      const SizedBox(height: 24),
+
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(color: AppColors.grey200),
+                        ),
+                        child: Column(
                           children: [
-                            _BadgeChip(
-                              label: category,
-                              color: NimoraColors.jobBadgeDefaultColor,
+                            Container(
+                              width: double.infinity,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 14,
+                                vertical: 12,
+                              ),
+                              decoration: const BoxDecoration(
+                                color: NimoraColors.moreContainerHeaderBgColor,
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(14),
+                                  topRight: Radius.circular(14),
+                                ),
+                              ),
+                              child: const Text(
+                                'Service Requirements',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 14),
+                            if (job.data?.jobRequirements?.serviceRequirement !=
+                                null)
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 12),
+                                child: _RequirementTile(
+                                  text: job
+                                      .data!
+                                      .jobRequirements!
+                                      .serviceRequirement!,
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+
+                      const SizedBox(height: 24),
+
+                      _SessionsCard(job: job),
+
+                      const SizedBox(height: 120),
+                    ],
+                  ),
+                ),
+              ),
+
+              // BOTTOM BUTTON
+              Container(
+                padding: EdgeInsets.fromLTRB(
+                  20,
+                  16,
+                  20,
+                  MediaQuery.of(context).padding.bottom + 16,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.05),
+                      blurRadius: 20,
+                      offset: const Offset(0, -4),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  children: [
+                    if (isApplied) ...[
+                      Container(
+                        padding: const EdgeInsets.all(14),
+                        decoration: BoxDecoration(
+                          color: NimoraColors.jobAppliedContainerBgColor,
+                          borderRadius: BorderRadius.circular(14),
+                          border: Border.all(
+                            color: NimoraColors.jobAppliedContainerBorderColor,
+                          ),
+                        ),
+                        child: const Row(
+                          children: [
+                            Icon(
+                              Icons.check_circle,
+                              color:
+                              NimoraColors.jobAppliedContainerBorderColor,
+                            ),
+                            SizedBox(width: 10),
+                            Text(
+                              'Job applied successfully',
+                              style: TextStyle(
+                                color: NimoraColors.hourlyRateColor,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                           ],
                         ),
-                      const Spacer(),
-
-                      Text(
-                        '\$${job.data?.job?.hourlyRate?.toStringAsFixed(2)}/hr',
-                        style: const TextStyle(
-                          color: NimoraColors.hourlyRateColor,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w800,
-                        ),
                       ),
+                      const SizedBox(height: 14),
                     ],
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  Text(
-                    'Job #: ${job.data?.job?.id}',
-                    style: TextStyle(color: Colors.grey.shade500, fontSize: 12),
-                  ),
-
-                  const SizedBox(height: 6),
-
-                  Text(
-                    job.data?.job?.title ?? '',
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w700,
-                      color: NimoraColors.titleColor,
-                    ),
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  _metaRow(
-                    Icons.location_on_outlined,
-                    // '${job.data?.job?} • ${job.data?.job?.distanceKm} km away',
-                    '${job.data?.location?.first.city},${job.data?.location?.first.state} • ${job.data?.location?.first.distanceKm} away',
-                  ),
-
-                  const SizedBox(height: 10),
-
-                  Row(
-                    children: [
-                      _metaRow(
-                        Icons.schedule_outlined,
-                        'Posted ${getPostedAgo(job.data?.job?.createdAt)}',
-                      ),
-
-                      const SizedBox(width: 16),
-
-                      _metaRow(
-                        Icons.people_outline_rounded,
-                        '3+ applications',
-                        // '${job.applicationsCount}+ applications',
-                        color: NimoraColors.applicantsColor,
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(height: 28),
-
-                  // CLIENT INFO
-                  const Text(
-                    'Client Information',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: NimoraColors.titleColor,
-                    ),
-                  ),
-
-                  const SizedBox(height: 14),
-
-                  _ClientCard(job: job),
-
-                  const SizedBox(height: 24),
-
-                  // SERVICE REQUIREMENTS
-                  Container(
-                    // padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: AppColors.grey200),
-                    ),
-                    child: Column(
-                      children: [
-                        // Container(
-                        //   child: const Text(
-                        //     'Service Requirements',
-                        //     style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
-                        //   ),
-                        //   width: double.infinity,
-                        //   decoration: BoxDecoration(color: Colors.grey),
-                        // ),
-                        Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 14,
-                            vertical: 12,
-                          ),
-                          decoration: const BoxDecoration(
-                            color: NimoraColors.moreContainerHeaderBgColor,
-                            borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(14),
-                              topRight: Radius.circular(14),
-                            ),
-                          ),
-                          child: const Text(
-                            'Service Requirements',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                            ),
+                    SizedBox(
+                      width: double.infinity,
+                      height: 54,
+                      child: ElevatedButton(
+                        onPressed: isApplying || isApplied
+                            ? null
+                            : () {
+                          final jobId = job.data?.job?.id;
+                          if (jobId != null) {
+                            context.read<JobsBloc>().add(
+                              JobAppliedEvent(jobId),
+                            );
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.primary,
+                          disabledBackgroundColor: AppColors.primary,
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
                           ),
                         ),
-                        const SizedBox(height: 14),
-
-                        if (job.data?.jobRequirements?.serviceRequirement !=
-                            null)
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 12),
-                            child: _RequirementTile(
-                              text: job
-                                  .data!
-                                  .jobRequirements!
-                                  .serviceRequirement!,
-                            ),
-                          ),
-                      ],
-                    ),
-                  ),
-
-                  const SizedBox(height: 24),
-
-                  // SESSIONS
-                  _SessionsCard(job: job),
-
-                  const SizedBox(height: 120),
-                ],
-              ),
-            ),
-          ),
-
-          // BOTTOM BUTTON
-          Container(
-            padding: EdgeInsets.fromLTRB(
-              20,
-              16,
-              20,
-              MediaQuery.of(context).padding.bottom + 16,
-            ),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.05),
-                  blurRadius: 20,
-                  offset: const Offset(0, -4),
-                ),
-              ],
-            ),
-            child: Column(
-              children: [
-                if (_applied) ...[
-                  Container(
-                    padding: const EdgeInsets.all(14),
-                    decoration: BoxDecoration(
-                      color: NimoraColors.jobAppliedContainerBgColor,
-                      borderRadius: BorderRadius.circular(14),
-                      border: Border.all(
-                        color: NimoraColors.jobAppliedContainerBorderColor,
-                      ),
-                    ),
-                    child: const Row(
-                      children: [
-                        Icon(
-                          Icons.check_circle,
-                          color: NimoraColors.jobAppliedContainerBorderColor,
-                        ),
-
-                        SizedBox(width: 10),
-
-                        Text(
-                          'Job applied successfully',
-                          style: TextStyle(
-                            color: NimoraColors.hourlyRateColor,
+                        child: Text(
+                          isApplying
+                              ? 'Applying...'
+                              : isApplied
+                              ? 'Applied'
+                              : 'Apply Now',
+                          style: const TextStyle(
+                            fontSize: 14,
                             fontWeight: FontWeight.w600,
+                            color: Colors.white,
                           ),
                         ),
-                      ],
-                    ),
-                  ),
-
-                  const SizedBox(height: 14),
-                ],
-
-                SizedBox(
-                  width: double.infinity,
-                  height: 54,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        _applied = true;
-                      });
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary,
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
                       ),
                     ),
-                    child: Text(
-                      _applied ? 'Applied' : 'Apply Now',
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -359,9 +358,7 @@ class _JobDetailPageState extends State<JobDetailPage> {
     return Row(
       children: [
         Icon(icon, size: 16, color: Colors.grey.shade500),
-
         const SizedBox(width: 5),
-
         Text(
           text,
           style: TextStyle(
@@ -378,16 +375,12 @@ class _JobDetailPageState extends State<JobDetailPage> {
     switch (badge) {
       case JobBadge.ndis:
         return 'NDIS';
-
       case JobBadge.agedCare:
         return 'Aged';
-
       case JobBadge.disability:
         return 'Disability';
-
       case JobBadge.mentalHealth:
         return 'Mental Health';
-
       case JobBadge.urgent:
         return 'Urgent';
     }
@@ -397,7 +390,6 @@ class _JobDetailPageState extends State<JobDetailPage> {
     switch (badge) {
       case JobBadge.urgent:
         return NimoraColors.jobBadgeUrgentColor;
-
       default:
         return NimoraColors.jobBadgeDefaultColor;
     }
@@ -437,9 +429,7 @@ class _ClientCard extends StatelessWidget {
               ),
             ),
           ),
-
           const SizedBox(width: 14),
-
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -452,9 +442,7 @@ class _ClientCard extends StatelessWidget {
                     color: Colors.black,
                   ),
                 ),
-
                 const SizedBox(height: 4),
-
                 Text(
                   '${job.data?.sessions?.first.startTime} - ${job.data?.sessions?.first.endTime}',
                   style: const TextStyle(
@@ -463,9 +451,7 @@ class _ClientCard extends StatelessWidget {
                     fontWeight: FontWeight.w400,
                   ),
                 ),
-
                 const SizedBox(height: 4),
-
                 Text(
                   '${job.data?.location?.first.city},${job.data?.location?.first.state} • ${job.data?.location?.first.distanceKm} away',
                   style: const TextStyle(
@@ -547,9 +533,7 @@ class _SessionsCard extends StatelessWidget {
                   color: NimoraColors.titleColor,
                 ),
               ),
-
               const Spacer(),
-
               Text(
                 '${sessions.length} session${sessions.length == 1 ? '' : 's'}',
                 style: const TextStyle(
@@ -560,9 +544,7 @@ class _SessionsCard extends StatelessWidget {
               ),
             ],
           ),
-
           const SizedBox(height: 18),
-
           if (sessions.isEmpty)
             const Padding(
               padding: EdgeInsets.symmetric(vertical: 8),
@@ -574,7 +556,6 @@ class _SessionsCard extends StatelessWidget {
           else
             ...sessions.asMap().entries.map((entry) {
               final index = entry.key;
-              final session = entry.value;
               return Padding(
                 padding: EdgeInsets.only(
                   bottom: index < sessions.length - 1 ? 12 : 0,
@@ -582,8 +563,7 @@ class _SessionsCard extends StatelessWidget {
                 child: _sessionTile(
                   index: index + 1,
                   time:
-                      '${job.data?.sessions?.first.startTime} - ${job.data?.sessions?.first.endTime}',
-                  // dateRange: session.formattedDateRange,
+                  '${job.data?.sessions?.first.startTime} - ${job.data?.sessions?.first.endTime}',
                   dateRange: '',
                 ),
               );
@@ -614,9 +594,7 @@ class _SessionsCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(20),
             ),
           ),
-
           const SizedBox(width: 12),
-
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -658,7 +636,6 @@ class _SessionsCard extends StatelessWidget {
 
 class _BadgeChip extends StatelessWidget {
   final String label;
-
   final Color color;
 
   const _BadgeChip({required this.label, required this.color});

@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nimora_worker/core/enums/job_tab.dart';
 import 'package:nimora_worker/domain/model/request/jobs_nearby_request_model.dart';
 import 'package:nimora_worker/domain/model/response/job_applied_response_model.dart';
@@ -50,7 +50,13 @@ class JobsBloc extends Bloc<JobsEvent, JobsState> {
           response.data?.jobs?.map((e) => Job.fromJson(e.toJson())).toList() ??
           [];
 
-      emit(JobsSuccess(jobs: jobs, filteredJobs: jobs));
+      emit(
+        JobsSuccess(
+          jobs: jobs,
+          filteredJobs: jobs,
+          selectedTab: JobsTab.allJobs,
+        ),
+      );
     } catch (e) {
       emit(JobsError(e.toString()));
     }
@@ -59,61 +65,88 @@ class JobsBloc extends Bloc<JobsEvent, JobsState> {
   void _onSearchChanged(JobsSearchChanged event, Emitter<JobsState> emit) {
     final currentState = state;
 
-    if (currentState is JobsSuccess) {
-      final query = event.query.toLowerCase();
+    if (currentState is! JobsSuccess) return;
 
-      final filteredJobs = event.query.isEmpty
-          ? currentState.jobs
-          : currentState.jobs.where((job) {
-              return job.title.toLowerCase().contains(query) ||
-                  job.location.toLowerCase().contains(query);
-            }).toList();
+    final query = event.query.toLowerCase();
 
-      emit(
-        currentState.copyWith(filteredJobs: filteredJobs, query: event.query),
-      );
-    }
+    final filteredJobs = event.query.isEmpty
+        ? currentState.jobs
+        : currentState.jobs.where((job) {
+            return job.title.toLowerCase().contains(query) ||
+                job.location.toLowerCase().contains(query);
+          }).toList();
+
+    emit(currentState.copyWith(filteredJobs: filteredJobs, query: event.query));
   }
 
   void _onSaveToggled(JobSaveToggled event, Emitter<JobsState> emit) {
     final currentState = state;
 
-    if (currentState is JobsSuccess) {
-      final updatedJobs = currentState.jobs.map((job) {
-        return job.id == event.jobId
-            ? job.copyWith(isSaved: !job.isSaved)
-            : job;
-      }).toList();
+    if (currentState is! JobsSuccess) return;
 
-      final filteredJobs = currentState.query.isEmpty
-          ? updatedJobs
-          : updatedJobs.where((job) {
-              final query = currentState.query.toLowerCase();
+    final updatedJobs = currentState.jobs.map((job) {
+      return job.id == event.jobId ? job.copyWith(isSaved: !job.isSaved) : job;
+    }).toList();
 
-              return job.title.toLowerCase().contains(query) ||
-                  job.location.toLowerCase().contains(query);
-            }).toList();
+    final filteredJobs = currentState.query.isEmpty
+        ? updatedJobs
+        : updatedJobs.where((job) {
+            final query = currentState.query.toLowerCase();
 
-      emit(
-        currentState.copyWith(jobs: updatedJobs, filteredJobs: filteredJobs),
-      );
-    }
+            return job.title.toLowerCase().contains(query) ||
+                job.location.toLowerCase().contains(query);
+          }).toList();
+
+    emit(currentState.copyWith(jobs: updatedJobs, filteredJobs: filteredJobs));
   }
 
   void _onSelected(JobSelected event, Emitter<JobsState> emit) {
     final currentState = state;
 
-    if (currentState is JobsSuccess) {
-      emit(currentState.copyWith(selectedJob: event.job));
-    }
+    if (currentState is! JobsSuccess) return;
+
+    emit(currentState.copyWith(selectedJob: event.job));
   }
 
-  void _onTabChanged(JobsTabChanged event, Emitter<JobsState> emit) {
-    final currentState = state;
-
-    if (currentState is JobsSuccess) {
-      emit(currentState.copyWith(selectedTab: event.tab));
-    }
+  Future<void> _onTabChanged(
+    JobsTabChanged event,
+    Emitter<JobsState> emit,
+  ) async {
+    // final currentState = state;
+    //
+    // if (currentState is! JobsSuccess) return;
+    //
+    // try {
+    //   final response = event.tab == JobsTab.allJobs
+    //       ? await _jobsRepository.jobsRequest(
+    //           jobsNearbyRequestModel: JobsNearbyRequestModel(
+    //             page: 1,
+    //             limit: 10,
+    //             search: currentState.query,
+    //             locationType: 'current',
+    //             latitude: 13.0827,
+    //             longitude: 80.2707,
+    //             address: 'Chennai, Tamil Nadu',
+    //             radiusKm: 25,
+    //           ),
+    //         )
+    //       : await _jobsRepository.jobTrackerRequest(page: 1, limit: 10);
+    //
+    //   final jobs =
+    //       response.data?.jobs?.map((e) => Job.fromJson(e.toJson())).toList() ??
+    //       [];
+    //
+    //   emit(
+    //     currentState.copyWith(
+    //       selectedTab: event.tab,
+    //       jobs: jobs,
+    //       filteredJobs: jobs,
+    //       selectedJob: null,
+    //     ),
+    //   );
+    // } catch (e) {
+    //   emit(JobsError(e.toString()));
+    // }
   }
 
   Future<void> _onDetailRequested(
@@ -136,33 +169,35 @@ class JobsBloc extends Bloc<JobsEvent, JobsState> {
   }
 
   Future<void> _onJobAppliedEvent(
-      JobAppliedEvent event,
-      Emitter<JobsState> emit,
-      ) async {
+    JobAppliedEvent event,
+    Emitter<JobsState> emit,
+  ) async {
     final currentState = state;
 
-    if (currentState is! JobsDetailsOnLoadedState) {
-      return;
+    JobDetailResponseModel? jobDetail;
+
+    if (currentState is JobsDetailsOnLoadedState) {
+      jobDetail = currentState.response;
+    } else if (currentState is JobAppliedLoadingState) {
+      jobDetail = currentState.jobDetail;
+    } else if (currentState is JobAppliedSuccessState) {
+      jobDetail = currentState.jobDetail;
+    } else if (currentState is JobAppliedErrorState) {
+      jobDetail = currentState.jobDetail;
     }
 
-    emit(const JobAppliedLoadingState());
+    if (jobDetail == null) return;
+
+    emit(JobAppliedLoadingState(jobDetail: jobDetail));
 
     try {
       final response = await jobsRepository.jobAppliedSubmit(
         jobId: event.jobId,
       );
 
-      emit(
-        JobAppliedSuccessState(
-          response: response,
-        ),
-      );
+      emit(JobAppliedSuccessState(jobDetail: jobDetail, response: response));
     } catch (e) {
-      emit(
-        JobAppliedErrorState(
-          message: e.toString(),
-        ),
-      );
+      emit(JobAppliedErrorState(jobDetail: jobDetail, message: e.toString()));
     }
   }
 }
