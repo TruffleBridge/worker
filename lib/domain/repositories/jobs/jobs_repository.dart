@@ -3,6 +3,9 @@ import 'package:nimora_worker/domain/model/response/job_applied_response_model.d
 import 'package:nimora_worker/domain/model/response/job_detail_response_model.dart';
 import 'package:nimora_worker/domain/model/response/jobs_nearby_response_model.dart';
 
+import '../../model/request/job_listing/job_listing_request_model.dart';
+import '../../model/response/job_listing/job_listing_response_model.dart';
+
 abstract class JobsRepository {
   Future<JobsNearbyResponseModel> jobsRequest({
     required JobsNearbyRequestModel jobsNearbyRequestModel,
@@ -16,5 +19,8 @@ abstract class JobsRepository {
 
   Future<JobAppliedResponseModel> jobAppliedSubmit({
     required int jobId,
+  });
+  Future<MyJobsResponseModel> myJobsListRequest({
+    required MyJobsRequestModel myJobsRequestModel,
   });
 }

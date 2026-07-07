@@ -190,6 +190,7 @@
 // }
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:nimora_worker/core/constants/assets_images.dart';
@@ -197,10 +198,21 @@ import 'package:nimora_worker/core/theme/app_theme.dart';
 import 'package:nimora_worker/presentation/widgets/components/sign_is_success_dialog.dart';
 import 'package:nimora_worker/presentation/widgets/worker_widgets/sign_in_splash/social_buttons.dart';
 import 'package:nimora_worker/routes/app_router.dart';
+import '../../../../bloc/client_bloc/login/login_bloc.dart';
 
 class ClientSignInSplashWidget extends StatelessWidget {
   const ClientSignInSplashWidget({super.key});
 
+
+  static const _email = 'lokesh@gmail.com';
+  static const _password = 'Test@123';
+
+  void _onSignInButtonTap(BuildContext context) {
+    final bloc = context.read<LoginBloc>();
+    bloc.add(const ClientLoginEmailChanged(_email) as LoginEvent);
+    bloc.add(const ClientLoginPasswordChanged(_password) as LoginEvent);
+    bloc.add(const ClientLoginSubmitted() as LoginEvent);
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -248,7 +260,7 @@ class ClientSignInSplashWidget extends StatelessWidget {
                     imagePath: AssetSVGImages.googleLogo,
                     label: 'Sign In Using Google',
                     onTap: () {
-                      // TODO: Google Login
+                      _onSignInButtonTap(context);
                       showSignInSuccessDialog(
                         context,
                         onComplete: () {
@@ -265,7 +277,7 @@ class ClientSignInSplashWidget extends StatelessWidget {
                     imagePath: AssetSVGImages.facebookLogo,
                     label: 'Sign in Using Facebook',
                     onTap: () {
-                      // TODO: Facebook Login
+                     _onSignInButtonTap(context);
                       showSignInSuccessDialog(
                         context,
                         onComplete: () {
@@ -283,7 +295,7 @@ class ClientSignInSplashWidget extends StatelessWidget {
                     label: 'Sign In Using Apple ID',
                     isApple: true,
                     onTap: () {
-                      // TODO: Apple Login
+                      _onSignInButtonTap(context);
                       showSignInSuccessDialog(
                         context,
                         onComplete: () {
