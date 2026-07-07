@@ -132,7 +132,7 @@ class AllJobsCard extends StatelessWidget {
                 _MetaRow(
                   icon: Icons.people_outline_rounded,
                   iconColor: const Color(0xFF2962FF),
-                  text: '${job.applicationsCount}+ applications',
+                  text: '${job.applicationCount}+ applications',
                   textColor: const Color(0xFF2962FF),
                 ),
               ],

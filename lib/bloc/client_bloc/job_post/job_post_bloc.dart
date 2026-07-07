@@ -103,7 +103,9 @@ class JobPostBloc extends Bloc<JobPostEvent, JobPostState> {
         hourlyRate: updatedState.hourlyRate,
         shift: updatedState.shift,
         hoursPerDay: updatedState.hoursPerDay,
-        serviceRequirement: updatedState.serviceRequirement,
+        //ToDo
+        // serviceRequirement: updatedState.serviceRequirement,
+        serviceRequirement: updatedState.description,
         location: JobPostLocation(
           street1: updatedState.street1,
           city: updatedState.city,

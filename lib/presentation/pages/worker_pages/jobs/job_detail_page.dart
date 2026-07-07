@@ -24,11 +24,11 @@ class _JobDetailPageState extends State<JobDetailPage> {
     return BlocConsumer<JobsBloc, JobsState>(
       listener: (context, state) {
         if (state is JobAppliedSuccessState) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Job applied successfully'),
-            ),
-          );
+          // ScaffoldMessenger.of(context).showSnackBar(
+          //   const SnackBar(
+          //     content: Text('Job applied successfully'),
+          //   ),
+          // );
         } else if (state is JobAppliedErrorState) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -308,6 +308,7 @@ class _JobDetailPageState extends State<JobDetailPage> {
                       ),
                       const SizedBox(height: 14),
                     ],
+                    if(!isApplied)
                     SizedBox(
                       width: double.infinity,
                       height: 54,

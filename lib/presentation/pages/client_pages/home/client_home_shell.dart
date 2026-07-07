@@ -3,6 +3,8 @@ import 'package:go_router/go_router.dart';
 import 'package:nimora_worker/presentation/pages/client_pages/home/client_app_bottom_nav_bar.dart';
 import 'package:nimora_worker/presentation/pages/client_pages/home/client_home_page.dart';
 import 'package:nimora_worker/presentation/pages/job_lisiting/job_listing_page.dart';
+import 'package:nimora_worker/presentation/pages/worker_pages/more/more_page.dart';
+import 'package:nimora_worker/presentation/widgets/client_widgets/more/more_widget.dart';
 import 'package:nimora_worker/presentation/widgets/components/coming_soon_widget.dart';
 
 import '../../../../routes/app_router.dart';
@@ -29,7 +31,7 @@ class _ClientHomeShellPageState extends State<ClientHomeShellPage> {
         return const ComingSoonWidget();
 
       case 3:
-        return const ComingSoonWidget();
+        return const MorePage();
 
       default:
         return const ClientHomePage();

@@ -50,9 +50,9 @@ class JobListItemModel {
   final String? title;
   final String? status;
   final String? location;
-  final String? postedAt;
+  final String? postedTime;
   final List<String> tags;
-  final int? applicantsCount;
+  final int? applicantCount;
   final List<String> applicantAvatars;
 
   JobListItemModel({
@@ -60,9 +60,9 @@ class JobListItemModel {
     this.title,
     this.status,
     this.location,
-    this.postedAt,
+    this.postedTime,
     this.tags = const [],
-    this.applicantsCount,
+    this.applicantCount,
     this.applicantAvatars = const [],
   });
 
@@ -74,13 +74,13 @@ class JobListItemModel {
       title: json['title'] as String?,
       status: json['status'] as String?,
       location: json['location'] as String?,
-      postedAt: json['postedAt'] as String?,
+      postedTime: json['postedTime'] as String?,
       tags: (json['tags'] as List<dynamic>? ?? [])
           .map((e) => e.toString())
           .toList(),
-      applicantsCount: json['applicantsCount'] == null
+      applicantCount: json['applicantCount'] == null
           ? null
-          : int.tryParse(json['applicantsCount'].toString()),
+          : int.tryParse(json['applicantCount'].toString()),
       applicantAvatars: (json['applicantAvatars'] as List<dynamic>? ?? [])
           .map((e) => e.toString())
           .toList(),

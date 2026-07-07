@@ -36,7 +36,9 @@ class _JobPostWidgetState extends State<JobPostWidget> {
   void _handleBack() {
     if (_currentStep > 1) {
       _goToPreviousStep();
-    } else {
+    } else if(_currentStep==1){
+      context.go(AppRoutes.clientHome);
+    }else {
       if (context.canPop()) {
         context.pop();
       }
@@ -64,12 +66,12 @@ class _JobPostWidgetState extends State<JobPostWidget> {
         if (state.isSuccess && !_hasHandledSuccess) {
           _hasHandledSuccess = true;
 
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Job posted successfully'),
-              backgroundColor: Colors.green,
-            ),
-          );
+          // ScaffoldMessenger.of(context).showSnackBar(
+          //   const SnackBar(
+          //     content: Text('Job posted successfully'),
+          //     backgroundColor: Colors.green,
+          //   ),
+          // );
 
           WidgetsBinding.instance.addPostFrameCallback((_) {
             if (!mounted) return;

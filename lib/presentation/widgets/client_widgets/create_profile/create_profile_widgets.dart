@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:nimora_worker/core/theme/app_theme.dart';
+import 'package:nimora_worker/routes/app_router.dart';
 
 class CreateProfileAppBar extends StatelessWidget
     implements PreferredSizeWidget {
@@ -48,6 +50,17 @@ class CreateProfileAppBar extends StatelessWidget
         ),
       ),
       title: Text(title, style: NdisThemeStyle.headlineMedium),
+      actions: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: InkWell(
+            onTap: () {
+              context.go(AppRoutes.clientHome);
+            },
+            child: Text('Skip'),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -225,7 +238,7 @@ class UploadRow extends StatelessWidget {
               child: Row(
                 children: [
                   SvgPicture.asset('assets/images/upload_icon.svg'),
-                  SizedBox(width: 10,),
+                  SizedBox(width: 10),
                   Text(
                     'Upload',
                     style: NdisThemeStyle.bodyMedium.copyWith(

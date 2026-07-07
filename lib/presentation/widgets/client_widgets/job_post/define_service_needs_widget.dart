@@ -24,7 +24,7 @@ class _DefineServiceNeedsWidgetState extends State<DefineServiceNeedsWidget> {
   late final TextEditingController _titleController;
   late final TextEditingController _descriptionController;
 
-  final List<String> _serviceCategories = const ['Healthcare', 'Training'];
+  final List<String> _serviceCategories = const ['Healthcare'];
 
   String? _selectedCategory;
 

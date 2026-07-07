@@ -203,7 +203,7 @@ import 'package:nimora_worker/routes/app_router.dart';
 class ClientSignInSplashWidget extends StatelessWidget {
   const ClientSignInSplashWidget({super.key});
 
-  static const _email = 'lokesh@gmail.com';
+  static const _email = 'vishal@gmail.com';
   static const _password = 'Test@123';
 
   // void _onSignInButtonTap(BuildContext context) {

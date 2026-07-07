@@ -477,6 +477,7 @@ class _PreferredScheduleWidgetState extends State<PreferredScheduleWidget> {
         TextField(
           controller: _zipCodeController,
           keyboardType: TextInputType.number,
+          maxLength: 6,
           decoration: InputDecoration(
             hintText: 'Enter zip code',
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),

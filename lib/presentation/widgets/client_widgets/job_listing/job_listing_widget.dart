@@ -313,7 +313,7 @@ class _JobListingWidgetState extends State<JobListingWidget> {
             children: [
               const Icon(Icons.access_time, size: 18),
               const SizedBox(width: 4),
-              Text(job.postedAt ?? '-'),
+              Text(job.postedTime ?? '-'),
             ],
           ),
           const SizedBox(height: 16),
@@ -332,7 +332,7 @@ class _JobListingWidgetState extends State<JobListingWidget> {
               ..._buildAvatars(job.applicantAvatars),
               const Spacer(),
               Text(
-                "${job.applicantsCount ?? 0}+ applicants",
+                "${job.applicantCount ?? 0}+ applicants",
                 style: const TextStyle(
                   color: Colors.blue,
                   fontWeight: FontWeight.bold,
