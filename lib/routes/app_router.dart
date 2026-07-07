@@ -13,6 +13,8 @@ import 'package:nimora_worker/presentation/pages/worker_pages/onboarding/onboard
 import 'package:nimora_worker/presentation/pages/worker_pages/sign_in_splash/sign_in_splash_page.dart';
 import 'package:nimora_worker/presentation/pages/worker_pages/splash/splash_page.dart';
 import 'package:nimora_worker/presentation/pages/client_pages/login/client_otp_page.dart';
+import 'package:nimora_worker/presentation/widgets/client_widgets/create_profile/create_profile_flow.dart';
+import 'package:nimora_worker/presentation/widgets/client_widgets/job_post/job_post_success_widget.dart';
 import 'package:nimora_worker/presentation/widgets/worker_widgets/more/account_setting_page.dart';
 import 'package:nimora_worker/presentation/widgets/worker_widgets/more/byo_clients_page.dart';
 import 'package:nimora_worker/presentation/widgets/worker_widgets/more/incident_reports_page.dart';
@@ -61,8 +63,10 @@ abstract class AppRoutes {
   static const String clientLogin = '/client-login';
   static const String clientOtpScreen = '/client-otp-screen';
   static const String clientHome = '/client-home';
+  static const String clientCreateProfile = '/client-create-profile';
   static const String clientJobPost = '/job-post';
   static const String workerDetail = '/client-worker-detail';
+  static const String jobPostSuccess = '/job-post-success';
 }
 
 final GoRouter appRouter = GoRouter(
@@ -361,6 +365,24 @@ final GoRouter appRouter = GoRouter(
         key: state.pageKey,
         child: const WorkerDetailPage(),
         transitionsBuilder: _slideTransition,
+      ),
+    ),
+    GoRoute(
+      path: AppRoutes.clientCreateProfile,
+      name: 'clientCreateProfile',
+      pageBuilder: (context, state) => CustomTransitionPage(
+        key: state.pageKey,
+        child: const CreateProfileFlow(),
+        transitionsBuilder: _fadeTransition,
+      ),
+    ),
+    GoRoute(
+      path: AppRoutes.jobPostSuccess,
+      name: 'jobPostSuccess',
+      pageBuilder: (context, state) => CustomTransitionPage(
+        key: state.pageKey,
+        child: const JobPostSuccessScreen(),
+        transitionsBuilder: _fadeTransition,
       ),
     ),
   ],

@@ -1,14 +1,14 @@
 class UpcomingBookingResponseModel {
   bool? status;
   String? message;
-  Data? data;
+  UpcomingBookingsData? data;
 
   UpcomingBookingResponseModel({this.status, this.message, this.data});
 
   UpcomingBookingResponseModel.fromJson(Map<String, dynamic> json) {
     status = json['status'];
     message = json['message'];
-    data = json['data'] != null ? Data.fromJson(json['data']) : null;
+    data = json['data'] != null ? UpcomingBookingsData.fromJson(json['data']) : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -22,15 +22,15 @@ class UpcomingBookingResponseModel {
   }
 }
 
-class Data {
+class UpcomingBookingsData {
   int? totalCount;
   Filters? filters;
   List<String>? calendarDates;
   List<Bookings>? bookings;
 
-  Data({this.totalCount, this.filters, this.calendarDates, this.bookings});
+  UpcomingBookingsData({this.totalCount, this.filters, this.calendarDates, this.bookings});
 
-  Data.fromJson(Map<String, dynamic> json) {
+  UpcomingBookingsData.fromJson(Map<String, dynamic> json) {
     totalCount = json['totalCount'];
     filters =
     json['filters'] != null ? Filters.fromJson(json['filters']) : null;

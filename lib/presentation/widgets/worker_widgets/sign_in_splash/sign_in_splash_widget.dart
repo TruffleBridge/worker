@@ -12,7 +12,7 @@ import 'package:nimora_worker/routes/app_router.dart';
 class WorkerSignInSplashWidget extends StatelessWidget {
   const WorkerSignInSplashWidget({super.key});
 
-  static const _email = 'vishal@gmail.com';
+  static const _email = 'lokesh@gmail.com';
   static const _password = 'Test@123';
 
   void _onSocialButtonTap(BuildContext context) {

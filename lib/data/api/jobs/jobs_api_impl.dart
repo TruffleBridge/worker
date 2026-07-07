@@ -40,7 +40,7 @@ class JobsApiImpl extends JobsApi {
     String? search,
   }) async {
     try {
-      final response = await _dio.post(
+      final response = await dio.post(
         '/api/job/jobTrackerList',
         data: {
           'page': page,

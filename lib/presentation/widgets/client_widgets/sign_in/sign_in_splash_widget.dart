@@ -229,7 +229,7 @@ class ClientSignInSplashWidget extends StatelessWidget {
               context,
               onComplete: () {
                 Navigator.of(context).pop();
-                context.go(AppRoutes.clientHome);
+                context.go(AppRoutes.clientCreateProfile);
               },
             );
           }

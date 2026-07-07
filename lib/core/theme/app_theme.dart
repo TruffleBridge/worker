@@ -13,12 +13,14 @@ class AppColors {
 
   static const Color white = Color(0xFFFFFFFF);
   static const Color black = Color(0xFF0A0A0A);
+
   static const Color grey100 = Color(0xFFF5F5F5);
   static const Color grey200 = Color(0xFFEEEEEE);
-  static const Color grey400 = Color(0xFFBDBDBD);
   static const Color grey300 = Color(0xFFD1D5DB);
+  static const Color grey400 = Color(0xFFBDBDBD);
   static const Color grey600 = Color(0xFF757575);
   static const Color grey800 = Color(0xFF424242);
+
   static const Color skipText = Color(0xFF343434);
 
   static const Color textPrimary = Color(0xFF1A1A2E);
@@ -28,16 +30,29 @@ class AppColors {
   static const Color background = Color(0xFFFFFFFF);
   static const Color surface = Color(0xFFFAFAFA);
 
+  /// Added for generated profile / onboarding screens
+  static const Color cardBorder = Color(0xFFE3E3E0);
+  static const Color trackInactive = Color(0xFFE3E3E0);
+  static const Color chipBg = Color(0xFFF2F2F0);
+  static const Color success = Color(0xFF2FAE6B);
+  static const Color successBg = Color(0xFFE3F6EC);
+
   static const LinearGradient splashGradient = LinearGradient(
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
-    colors: [Color(0xFFE8622A), Color(0xFFC44E1A)],
+    colors: [
+      Color(0xFFE8622A),
+      Color(0xFFC44E1A),
+    ],
   );
 
   static const LinearGradient imageOverlay = LinearGradient(
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
-    colors: [Color(0x40E8622A), Color(0xB0E8622A)],
+    colors: [
+      Color(0x40E8622A),
+      Color(0xB0E8622A),
+    ],
   );
 }
 
@@ -99,6 +114,28 @@ class NdisThemeStyle {
     color: AppColors.white,
     letterSpacing: -0.44,
   );
+
+  /// Helpers for generated forms / onboarding screens
+  static TextStyle get sectionTitle => GoogleFonts.inter(
+    fontSize: 16,
+    fontWeight: FontWeight.w700,
+    color: AppColors.textPrimary,
+    letterSpacing: -0.15,
+  );
+
+  static TextStyle get label => GoogleFonts.inter(
+    fontSize: 13,
+    fontWeight: FontWeight.w600,
+    color: AppColors.textPrimary,
+    letterSpacing: -0.10,
+  );
+
+  static TextStyle get hint => GoogleFonts.inter(
+    fontSize: 14,
+    fontWeight: FontWeight.w400,
+    color: AppColors.textHint,
+    letterSpacing: -0.10,
+  );
 }
 
 class AppTheme {
@@ -110,27 +147,82 @@ class AppTheme {
       seedColor: AppColors.primary,
       primary: AppColors.primary,
       onPrimary: AppColors.white,
-      background: AppColors.background,
       surface: AppColors.surface,
+      background: AppColors.background,
     ),
     scaffoldBackgroundColor: AppColors.background,
+
+    textTheme: GoogleFonts.interTextTheme().copyWith(
+      displayLarge: NdisThemeStyle.displayLarge,
+      displayMedium: NdisThemeStyle.displayMedium,
+      headlineLarge: NdisThemeStyle.headlineLarge,
+      headlineMedium: NdisThemeStyle.headlineMedium,
+      bodyLarge: NdisThemeStyle.bodyLarge,
+      bodyMedium: NdisThemeStyle.bodyMedium,
+      labelLarge: NdisThemeStyle.labelLarge,
+    ),
+
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
         backgroundColor: AppColors.primary,
         foregroundColor: AppColors.white,
-        minimumSize: const Size(double.infinity, 54),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+        minimumSize: const Size(double.infinity, AppDimensions.buttonHeight),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppDimensions.radiusM),
+        ),
         elevation: 0,
         textStyle: NdisThemeStyle.labelLarge,
       ),
     ),
-    textTheme: GoogleFonts.interTextTheme(),
+
     textButtonTheme: TextButtonThemeData(
       style: TextButton.styleFrom(
         foregroundColor: AppColors.grey600,
         textStyle: NdisThemeStyle.bodyMedium.copyWith(
           fontWeight: FontWeight.w600,
         ),
+      ),
+    ),
+
+    inputDecorationTheme: InputDecorationTheme(
+      filled: true,
+      fillColor: AppColors.white,
+      hintStyle: NdisThemeStyle.hint,
+      contentPadding: const EdgeInsets.symmetric(
+        horizontal: AppDimensions.paddingM,
+        vertical: 14,
+      ),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(AppDimensions.radiusM),
+        borderSide: const BorderSide(color: AppColors.grey300),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(AppDimensions.radiusM),
+        borderSide: const BorderSide(color: AppColors.grey300),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(AppDimensions.radiusM),
+        borderSide: const BorderSide(
+          color: AppColors.primary,
+          width: 1.4,
+        ),
+      ),
+      errorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(AppDimensions.radiusM),
+        borderSide: const BorderSide(color: Colors.red),
+      ),
+      focusedErrorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(AppDimensions.radiusM),
+        borderSide: const BorderSide(color: Colors.red),
+      ),
+    ),
+
+    cardTheme: CardThemeData(
+      color: AppColors.white,
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AppDimensions.radiusL),
+        side: const BorderSide(color: AppColors.cardBorder),
       ),
     ),
   );
@@ -154,4 +246,15 @@ class AppDimensions {
 
   static const double imageHeightRatio = 0.52;
   static const double buttonHeight = 54.0;
+}
+
+class AppPaddings {
+  AppPaddings._();
+
+  static const EdgeInsets page = EdgeInsets.fromLTRB(
+    AppDimensions.paddingM,
+    AppDimensions.paddingS,
+    AppDimensions.paddingM,
+    AppDimensions.paddingM,
+  );
 }

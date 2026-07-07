@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:nimora_worker/presentation/widgets/client_widgets/job_post/job_post_success_widget.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:nimora_worker/bloc/client_bloc/job_post/job_post_bloc.dart';
 
 import 'job_post_step_card.dart';
 import 'job_post_step_navigation.dart';
@@ -76,16 +77,44 @@ class _ExperienceLevelWidgetState extends State<ExperienceLevelWidget> {
         const SizedBox(height: 18),
         _buildVerificationBanner(),
         const SizedBox(height: 24),
-        JobPostFinalNavigation(
-          onPostJob: widget.onPostJob ?? ()
-          {
-            Navigator.push(context, MaterialPageRoute(builder: (_) => JobPostSuccessScreen())
-          );
-            },
-          onBack: widget.onBack,
+
+        BlocBuilder<JobPostBloc, JobPostState>(
+          builder: (context, state) {
+            return JobPostFinalNavigation(
+              onPostJob: state.isSubmitting ? null : _handlePostJob,
+              onBack: widget.onBack,
+              isLoading: state.isSubmitting,
+            );
+          },
         ),
       ],
     );
+  }
+
+  void _handlePostJob() {
+    context.read<JobPostBloc>().add(
+      JobPostSubmitEvent(
+        experienceLevel: _selectedExperience,
+        requiredSkills: _selectedSkills.toList(),
+        certifications: _certificationsChecked.entries
+            .where((entry) => entry.value)
+            .map((entry) => entry.key)
+            .toList(),
+        preferredLanguages: _selectedLanguages.toList(),
+        genderPreference: _mapGenderPreference(_selectedGender),
+      ),
+    );
+  }
+
+  String _mapGenderPreference(String value) {
+    switch (value) {
+      case 'Female':
+        return 'female';
+      case 'Male':
+        return 'male';
+      default:
+        return 'none';
+    }
   }
 
   Widget _buildExperienceLevelContent() {
@@ -95,8 +124,9 @@ class _ExperienceLevelWidgetState extends State<ExperienceLevelWidget> {
         const Text(
           'Experience Level',
           style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
+            fontSize: 17,
+            fontWeight: FontWeight.w700,
+            color: Color(0xFF1C1B1D),
           ),
         ),
         const SizedBox(height: 16),
@@ -104,16 +134,19 @@ class _ExperienceLevelWidgetState extends State<ExperienceLevelWidget> {
           final label = level.$1;
           final subtitle = level.$2;
           final isSelected = _selectedExperience == label;
+
           return Padding(
             padding: const EdgeInsets.only(bottom: 10),
             child: GestureDetector(
               onTap: () => setState(() => _selectedExperience = label),
               child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 14,
+                ),
                 decoration: BoxDecoration(
                   color: isSelected
-                      ? Colors.teal.withValues(alpha: 0.1)
+                      ? Colors.teal.withOpacity(0.1)
                       : Colors.grey.shade50,
                   borderRadius: BorderRadius.circular(14),
                   border: Border.all(
@@ -179,8 +212,9 @@ class _ExperienceLevelWidgetState extends State<ExperienceLevelWidget> {
         const Text(
           'Required Skills',
           style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
+            fontSize: 17,
+            fontWeight: FontWeight.w700,
+            color: Color(0xFF1C1B1D),
           ),
         ),
         const SizedBox(height: 16),
@@ -188,9 +222,7 @@ class _ExperienceLevelWidgetState extends State<ExperienceLevelWidget> {
           decoration: InputDecoration(
             hintText: 'Search for specific skills...',
             prefixIcon: Icon(Icons.search, color: Colors.grey.shade500),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
             contentPadding: const EdgeInsets.symmetric(vertical: 12),
           ),
         ),
@@ -199,10 +231,7 @@ class _ExperienceLevelWidgetState extends State<ExperienceLevelWidget> {
           onPressed: () {},
           style: OutlinedButton.styleFrom(
             minimumSize: const Size.fromHeight(48),
-            side: BorderSide(
-              color: Colors.grey.shade400,
-              style: BorderStyle.solid,
-            ),
+            side: BorderSide(color: Colors.grey.shade400),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),
@@ -248,7 +277,7 @@ class _ExperienceLevelWidgetState extends State<ExperienceLevelWidget> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               decoration: BoxDecoration(
-                color: Colors.teal.withValues(alpha: 0.1),
+                color: Colors.teal.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(color: Colors.teal.shade200),
               ),
@@ -269,6 +298,7 @@ class _ExperienceLevelWidgetState extends State<ExperienceLevelWidget> {
 
   Widget _buildSkillChip(String skill) {
     final isSelected = _selectedSkills.contains(skill);
+
     return GestureDetector(
       onTap: () {
         setState(() {
@@ -316,8 +346,9 @@ class _ExperienceLevelWidgetState extends State<ExperienceLevelWidget> {
         const Text(
           'Required Certifications',
           style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
+            fontSize: 17,
+            fontWeight: FontWeight.w700,
+            color: Color(0xFF1C1B1D),
           ),
         ),
         const SizedBox(height: 16),
@@ -377,10 +408,8 @@ class _ExperienceLevelWidgetState extends State<ExperienceLevelWidget> {
               },
               itemBuilder: (context) => ['High', 'Medium', 'Low']
                   .map(
-                    (level) => PopupMenuItem(
-                      value: level,
-                      child: Text(level),
-                    ),
+                    (level) =>
+                        PopupMenuItem<String>(value: level, child: Text(level)),
                   )
                   .toList(),
             ),
@@ -422,6 +451,7 @@ class _ExperienceLevelWidgetState extends State<ExperienceLevelWidget> {
 
   Widget _buildPriorityBadge(String priority) {
     final style = _priorityStyle(priority);
+
     return Container(
       margin: const EdgeInsets.only(left: 4),
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
@@ -451,8 +481,9 @@ class _ExperienceLevelWidgetState extends State<ExperienceLevelWidget> {
               child: Text(
                 'Language Preference',
                 style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
+                  fontSize: 17,
+                  fontWeight: FontWeight.w700,
+                  color: Color(0xFF1C1B1D),
                 ),
               ),
             ),
@@ -460,10 +491,7 @@ class _ExperienceLevelWidgetState extends State<ExperienceLevelWidget> {
               onPressed: () {},
               style: IconButton.styleFrom(
                 shape: RoundedRectangleBorder(
-                  side: BorderSide(
-                    color: Colors.black,
-                    width: 1.5
-                  ),
+                  side: const BorderSide(color: Colors.black, width: 1.5),
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
@@ -483,6 +511,7 @@ class _ExperienceLevelWidgetState extends State<ExperienceLevelWidget> {
 
   Widget _buildLanguageChip(String language) {
     final isSelected = _selectedLanguages.contains(language);
+
     return GestureDetector(
       onTap: () {
         setState(() {
@@ -529,8 +558,9 @@ class _ExperienceLevelWidgetState extends State<ExperienceLevelWidget> {
         const Text(
           'Worker Gender Preference',
           style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
+            fontSize: 17,
+            fontWeight: FontWeight.w700,
+            color: Color(0xFF1C1B1D),
           ),
         ),
         const SizedBox(height: 16),
@@ -538,6 +568,7 @@ class _ExperienceLevelWidgetState extends State<ExperienceLevelWidget> {
           children: List.generate(_genderOptions.length, (index) {
             final option = _genderOptions[index];
             final isSelected = _selectedGender == option;
+
             return Expanded(
               child: Padding(
                 padding: EdgeInsets.only(
@@ -557,8 +588,7 @@ class _ExperienceLevelWidgetState extends State<ExperienceLevelWidget> {
                       color: isSelected ? Colors.teal : Colors.white,
                       borderRadius: BorderRadius.circular(40),
                       border: Border.all(
-                        color:
-                            isSelected ? Colors.teal : Colors.grey.shade300,
+                        color: isSelected ? Colors.teal : Colors.grey.shade300,
                         width: 1.5,
                       ),
                     ),
@@ -590,7 +620,7 @@ class _ExperienceLevelWidgetState extends State<ExperienceLevelWidget> {
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.teal.withValues(alpha: 0.08),
+        color: Colors.teal.withOpacity(0.08),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: Colors.teal.shade100),
       ),
@@ -612,8 +642,7 @@ class _ExperienceLevelWidgetState extends State<ExperienceLevelWidget> {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'Every Nimora worker passes NDIS screening and identity '
-                  'checks before joining the platform.',
+                  'Every Nimora worker passes NDIS screening and identity checks before joining the platform.',
                   style: TextStyle(
                     fontSize: 13,
                     color: Colors.teal.shade800,
