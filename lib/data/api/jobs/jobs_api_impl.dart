@@ -5,7 +5,9 @@ import 'package:nimora_worker/domain/model/response/job_applied_response_model.d
 import 'package:nimora_worker/domain/model/response/job_detail_response_model.dart';
 import 'package:nimora_worker/domain/model/response/jobs_nearby_response_model.dart';
 
+import '../../../domain/model/request/job_detail/job_detail_request_model.dart';
 import '../../../domain/model/request/job_listing/job_listing_request_model.dart';
+import '../../../domain/model/response/job_detail/job_detail_response_model.dart';
 import '../../../domain/model/response/job_listing/job_listing_response_model.dart';
 
 class JobsApiImpl extends JobsApi {
@@ -67,16 +69,16 @@ class JobsApiImpl extends JobsApi {
     }
   }
   @override
-  Future<MyJobsResponseModel> myJobsListRequest({
-    required MyJobsRequestModel myJobsRequestModel,
+  Future<ClientJobsResponseModel> clientJobsListRequest({
+    required ClientJobsRequestModel clientJobsRequestModel,
   }) async {
     try {
       final response = await dio.post(
         '/api/client/myJobsList',
-        data: myJobsRequestModel.toJson(),
+        data: clientJobsRequestModel.toJson(),
       );
 
-      return MyJobsResponseModel.fromJson(
+      return ClientJobsResponseModel.fromJson(
         response.data as Map<String, dynamic>,
       );
     } on DioException catch (e) {
@@ -85,5 +87,26 @@ class JobsApiImpl extends JobsApi {
       );
     }
   }
+  @override
+  Future<ClientJobDetailResponseModel> clientJobDetailRequest({
+    required ClientJobDetailRequestModel clientJobDetailRequestModel,
+  }) async {
+    try {
+      final response = await dio.post(
+        '/api/job/viewJobDetail',
+        data: clientJobDetailRequestModel.toJson(),
+      );
+
+      return ClientJobDetailResponseModel.fromJson(
+        response.data as Map<String, dynamic>,
+      );
+    } on DioException catch (e) {
+      throw Exception(
+        e.response?.data?['message'] ??
+            'Failed to load job detail',
+      );
+    }
+  }
 }
+
 

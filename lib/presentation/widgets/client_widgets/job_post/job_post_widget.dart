@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import 'define_service_needs_widget.dart';
 import 'experience_level_widget.dart';
@@ -32,8 +33,8 @@ class _JobPostWidgetState extends State<JobPostWidget> {
     if (_currentStep > 1) {
       _goToPreviousStep();
     } else {
-      Navigator.pop(context);
-    }
+        context.go('/client-home'); // your home route
+      }
   }
 
   @override

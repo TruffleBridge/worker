@@ -36,8 +36,8 @@ class MyJobsListBloc extends Bloc<MyJobsListEvent, MyJobsListState> {
     required Emitter<MyJobsListState> emit,
   }) async {
     try {
-      final response = await jobsRepository.myJobsListRequest(
-        myJobsRequestModel: MyJobsRequestModel(
+      final response = await jobsRepository.clientJobsListRequest(
+        clientJobsRequestModel: ClientJobsRequestModel(
           status: status,
           page: page,
           limit: limit,
