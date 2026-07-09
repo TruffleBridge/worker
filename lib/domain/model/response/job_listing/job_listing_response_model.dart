@@ -1,16 +1,16 @@
-class MyJobsResponseModel {
+class ClientJobsResponseModel {
   final bool? success;
   final String? message;
   final MyJobsData? data;
 
-  MyJobsResponseModel({
+  ClientJobsResponseModel({
     this.success,
     this.message,
     this.data,
   });
 
-  factory MyJobsResponseModel.fromJson(Map<String, dynamic> json) {
-    return MyJobsResponseModel(
+  factory ClientJobsResponseModel.fromJson(Map<String, dynamic> json) {
+    return ClientJobsResponseModel(
       success: json['success'] as bool?,
       message: json['message'] as String?,
       data: json['data'] != null
@@ -53,7 +53,7 @@ class JobListItemModel {
   final String? postedTime;
   final List<String> tags;
   final int? applicantCount;
-  final List<String> applicantAvatars;
+  final List<ApplicantPreviewModel> applicantPreview;
 
   JobListItemModel({
     this.id,
@@ -63,14 +63,12 @@ class JobListItemModel {
     this.postedTime,
     this.tags = const [],
     this.applicantCount,
-    this.applicantAvatars = const [],
+    this.applicantPreview = const [],
   });
 
   factory JobListItemModel.fromJson(Map<String, dynamic> json) {
     return JobListItemModel(
-        id: json['id'] == null
-            ? null
-            : int.tryParse(json['id'].toString()),
+      id: int.tryParse(json['id'].toString()),
       title: json['title'] as String?,
       status: json['status'] as String?,
       location: json['location'] as String?,
@@ -79,11 +77,29 @@ class JobListItemModel {
           .map((e) => e.toString())
           .toList(),
       applicantCount: json['applicantCount'] == null
-          ? null
+          ? 0
           : int.tryParse(json['applicantCount'].toString()),
-      applicantAvatars: (json['applicantAvatars'] as List<dynamic>? ?? [])
-          .map((e) => e.toString())
+      applicantPreview:
+      (json['applicantPreview'] as List<dynamic>? ?? [])
+          .map((e) => ApplicantPreviewModel.fromJson(e as Map<String, dynamic>))
           .toList(),
+    );
+  }
+}
+
+class ApplicantPreviewModel {
+  final int? id;
+  final String? profilePicture;
+
+  ApplicantPreviewModel({
+    this.id,
+    this.profilePicture,
+  });
+
+  factory ApplicantPreviewModel.fromJson(Map<String, dynamic> json) {
+    return ApplicantPreviewModel(
+      id: int.tryParse(json['id'].toString()),
+      profilePicture: json['profilePicture'] as String?,
     );
   }
 }

@@ -6,7 +6,9 @@ import 'package:nimora_worker/domain/model/response/job_tracker_response_model.d
 import 'package:nimora_worker/domain/model/response/jobs_nearby_response_model.dart';
 import 'package:nimora_worker/domain/repositories/jobs/jobs_repository.dart';
 
+import '../../model/request/job_detail/job_detail_request_model.dart';
 import '../../model/request/job_listing/job_listing_request_model.dart';
+import '../../model/response/job_detail/job_detail_response_model.dart';
 import '../../model/response/job_listing/job_listing_response_model.dart';
 
 class JobsRepositoryImpl extends JobsRepository {
@@ -54,11 +56,20 @@ class JobsRepositoryImpl extends JobsRepository {
     return jobsApi.jobAppliedSubmit(jobId: jobId);
   }
   @override
-  Future<MyJobsResponseModel> myJobsListRequest({
-    required MyJobsRequestModel myJobsRequestModel,
+  Future<ClientJobsResponseModel> clientJobsListRequest({
+    required ClientJobsRequestModel clientJobsRequestModel,
   }) async {
-    return jobsApi.myJobsListRequest(
-      myJobsRequestModel: myJobsRequestModel,
+    return jobsApi.clientJobsListRequest(
+      clientJobsRequestModel: clientJobsRequestModel,
+    );
+  }
+
+  @override
+  Future<ClientJobDetailResponseModel> clientJobDetailRequest({
+    required ClientJobDetailRequestModel clientJobDetailRequestModel,
+  }) async {
+    return jobsApi.clientJobDetailRequest(
+      clientJobDetailRequestModel: clientJobDetailRequestModel,
     );
   }
 }

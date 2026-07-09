@@ -1,9 +1,9 @@
-class MyJobsRequestModel {
-  final String status; // "active" or "closed"
-  final int page;
-  final int limit;
+class ClientJobsRequestModel {
+  final String? status; // "active" or "closed"
+  final int? page;
+  final int? limit;
 
-  MyJobsRequestModel({
+  ClientJobsRequestModel({
     required this.status,
     this.page = 1,
     this.limit = 10,

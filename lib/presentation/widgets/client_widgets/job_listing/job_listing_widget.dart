@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:nimora_worker/presentation/pages/client_pages/Job_detail/job_detail_page.dart';
 import '../../../../bloc/client_bloc/job_lisiting/job_listing_bloc.dart';
 import '../../../../bloc/client_bloc/job_lisiting/job_listing_event.dart';
 import '../../../../bloc/client_bloc/job_lisiting/job_listing_state.dart';
 import '../../../../domain/model/response/job_listing/job_listing_response_model.dart';
-import 'job_detail_widget.dart';
 
 class JobListingWidget extends StatefulWidget {
   const JobListingWidget({super.key});
@@ -253,7 +253,9 @@ class _JobListingWidgetState extends State<JobListingWidget> {
                                       context,
                                       MaterialPageRoute(
                                         builder: (_) =>
-                                        const JobDetailWidget(),
+                                         ClientJobDetailPage(
+                                          jobId: job.id!,
+                                        )
                                       ),
                                     );
                                   },
@@ -329,7 +331,7 @@ class _JobListingWidgetState extends State<JobListingWidget> {
           const Divider(),
           Row(
             children: [
-              ..._buildAvatars(job.applicantAvatars),
+              ..._buildAvatars(job.applicantPreview),
               const Spacer(),
               Text(
                 "${job.applicantCount ?? 0}+ applicants",
@@ -345,8 +347,8 @@ class _JobListingWidgetState extends State<JobListingWidget> {
     );
   }
 
-  List<Widget> _buildAvatars(List<String> avatarUrls) {
-    final shown = avatarUrls.take(2).toList();
+  List<Widget> _buildAvatars(List<ApplicantPreviewModel> applicants) {
+    final shown = applicants.take(2).toList();
     final widgets = <Widget>[];
 
     for (var i = 0; i < shown.length; i++) {
@@ -355,13 +357,21 @@ class _JobListingWidgetState extends State<JobListingWidget> {
           offset: Offset(i == 0 ? 0 : -10.0 * i, 0),
           child: CircleAvatar(
             radius: 18,
-            backgroundImage: NetworkImage(shown[i]),
+            backgroundColor: Colors.grey.shade300,
+            backgroundImage: shown[i].profilePicture != null &&
+                shown[i].profilePicture!.isNotEmpty
+                ? NetworkImage(shown[i].profilePicture!)
+                : null,
+            child: shown[i].profilePicture == null ||
+                shown[i].profilePicture!.isEmpty
+                ? const Icon(Icons.person, size: 18)
+                : null,
           ),
         ),
       );
     }
 
-    if (avatarUrls.length > shown.length) {
+    if (applicants.length > shown.length) {
       widgets.add(
         Transform.translate(
           offset: Offset(-10.0 * shown.length, 0),
@@ -369,7 +379,7 @@ class _JobListingWidgetState extends State<JobListingWidget> {
             radius: 18,
             backgroundColor: const Color(0xffDCE8FF),
             child: Text(
-              "+${avatarUrls.length - shown.length}",
+              "+${applicants.length - shown.length}",
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
           ),
