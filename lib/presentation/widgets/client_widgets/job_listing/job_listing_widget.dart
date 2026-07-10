@@ -334,7 +334,9 @@ class _JobListingWidgetState extends State<JobListingWidget> {
               ..._buildAvatars(job.applicantPreview),
               const Spacer(),
               Text(
-                "${job.applicantCount ?? 0}+ applicants",
+                (job.applicantCount ?? 0) > 10
+                    ? "10+ applicants"
+                    : "${job.applicantCount ?? 0} applicants",
                 style: const TextStyle(
                   color: Colors.blue,
                   fontWeight: FontWeight.bold,

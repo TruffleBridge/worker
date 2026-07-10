@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../../../bloc/client_bloc/job_detail/job_detail_bloc.dart';
 import '../../../../bloc/client_bloc/job_detail/job_detail_state.dart';
+import '../../../../domain/model/response/job_detail/job_detail_response_model.dart';
 
 class JobDetailWidget extends StatefulWidget {
   const JobDetailWidget({super.key});
@@ -41,19 +42,23 @@ class _JobDetailWidgetState extends State<JobDetailWidget> {
 
         final response = state.response;
 
+        final applicants =
+            response.data?.applicants?.items ?? <ApplicantModel>[];
+
+        final serviceRequirements = response.data?.serviceRequirements ?? [];
+
         final job = response.data?.job;
 
-        final location = response.data?.location?.isNotEmpty == true
-            ? response.data!.location!.first
-            : null;
+        final location = response.data?.location;
 
-        final sessions = response.data?.sessions ?? [];
+        final sessions = response.data?.sessionItems ?? <SessionModel>[];
 
-        final requirements = response.data?.jobRequirements;
+        final firstApplicant = applicants.isNotEmpty ? applicants.first : null;
 
-        final serviceCategory = response.data?.serviceDetails?.serviceCategory;
+        final applicantCount = applicants.length;
 
-        final postedBy = response.data?.postedBy?.user;
+        final applicantCountText =
+        applicantCount > 10 ? "10+ applicants" : "$applicantCount applicants";
 
         return Scaffold(
           backgroundColor: _bg,
@@ -116,7 +121,7 @@ class _JobDetailWidgetState extends State<JobDetailWidget> {
 
                   const SizedBox(height: 6),
 
-                  _meta(Icons.access_time, job?.createdAt ?? ""),
+                  _meta(Icons.access_time, job?.postedTime ?? ""),
 
                   const SizedBox(height: 14),
 
@@ -124,22 +129,16 @@ class _JobDetailWidgetState extends State<JobDetailWidget> {
                     spacing: 8,
                     runSpacing: 8,
                     children: [
-                      if (serviceCategory != null)
-                        _tag(
-                          serviceCategory.name ?? "",
-                          const Color(0xFFF3F4F6),
-                          const Color(0xFF374151),
-                        ),
-
-                      if (job?.shift != null)
-                        _tag(job!.shift!, const Color(0xFFE0F2FE), Colors.blue),
-
-                      if (job?.category != null)
-                        _tag(
-                          job!.category!,
-                          const Color(0xFFFCE7F3),
-                          Colors.pink,
-                        ),
+                      ...job?.tags
+                              .map(
+                                (tag) => _tag(
+                                  tag,
+                                  const Color(0xffF2F2F2),
+                                  Colors.black,
+                                ),
+                              )
+                              .toList() ??
+                          [],
                     ],
                   ),
 
@@ -148,19 +147,42 @@ class _JobDetailWidgetState extends State<JobDetailWidget> {
                   Row(
                     children: [
                       CircleAvatar(
-                        radius: 18,
+                        radius: 22,
                         backgroundColor: Colors.grey.shade300,
-                        child: Text(
-                          postedBy?.firstName?.substring(0, 1).toUpperCase() ??
-                              "",
-                        ),
+                        backgroundImage: (firstApplicant?.profilePicture != null &&
+                            firstApplicant!.profilePicture!.isNotEmpty)
+                            ? NetworkImage(firstApplicant.profilePicture!)
+                            : null,
+                        child: firstApplicant == null
+                            ? const Icon(
+                          Icons.person,
+                          color: Colors.grey,
+                          size: 20,
+                        )
+                            : (firstApplicant.profilePicture == null ||
+                            firstApplicant.profilePicture!.isEmpty)
+                            ? Text(
+                          (firstApplicant.fullName?.isNotEmpty ?? false)
+                              ? firstApplicant.fullName!
+                              .trim()
+                              .split(' ')
+                              .map((e) => e[0])
+                              .take(2)
+                              .join()
+                              .toUpperCase()
+                              : "",
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        )
+                            : null,
                       ),
 
                       const SizedBox(width: 10),
 
                       Expanded(
                         child: Text(
-                          "${job?.applicationCount ?? 0} Applicants",
+                          applicantCountText,
                           style: const TextStyle(
                             color: _linkBlue,
                             fontWeight: FontWeight.w600,
@@ -177,44 +199,6 @@ class _JobDetailWidgetState extends State<JobDetailWidget> {
                         ),
                       ),
                     ],
-                  ),
-
-                  const SizedBox(height: 20),
-
-                  _card(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            const Text(
-                              "Job Description",
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                              ),
-                            ),
-
-                            const Spacer(),
-
-                            Text(
-                              "${job?.hoursPerDay ?? ""} hrs/day",
-                              style: const TextStyle(color: _secondary),
-                            ),
-                          ],
-                        ),
-
-                        const SizedBox(height: 12),
-
-                        Text(
-                          job?.description ?? "",
-                          style: const TextStyle(
-                            height: 1.6,
-                            color: Colors.black87,
-                          ),
-                        ),
-                      ],
-                    ),
                   ),
 
                   const SizedBox(height: 20),
@@ -275,212 +259,34 @@ class _JobDetailWidgetState extends State<JobDetailWidget> {
 
                         const SizedBox(height: 16),
 
-                        if (requirements?.serviceRequirement != null)
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              SvgPicture.asset(
-                                'assets/images/circular_tick.svg',
-                                width: 22,
-                                height: 22,
-                              ),
-
-                              const SizedBox(width: 10),
-
-                              Expanded(
-                                child: Text(
-                                  requirements!.serviceRequirement!,
-                                  style: const TextStyle(height: 1.5),
-                                ),
-                              ),
-                            ],
-                          ),
-
-                        if (requirements?.description != null) ...[
-                          const SizedBox(height: 16),
-                          const Divider(),
-                          const SizedBox(height: 16),
-
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              SvgPicture.asset(
-                                'assets/images/circular_tick.svg',
-                                width: 22,
-                                height: 22,
-                              ),
-
-                              const SizedBox(width: 10),
-
-                              Expanded(
-                                child: Text(
-                                  requirements!.description!,
-                                  style: const TextStyle(height: 1.5),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-
-                        if (job?.shift != null) ...[
-                          const SizedBox(height: 16),
-                          const Divider(),
-                          const SizedBox(height: 16),
-
-                          Row(
-                            children: [
-                              SvgPicture.asset(
-                                'assets/images/circular_tick.svg',
-                                width: 22,
-                                height: 22,
-                              ),
-
-                              const SizedBox(width: 10),
-
-                              Expanded(
-                                child: Text(
-                                  "Shift : ${job!.shift}",
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.w500,
+                        if (serviceRequirements.isNotEmpty)
+                          ...serviceRequirements.map(
+                            (requirement) => Padding(
+                              padding: const EdgeInsets.only(bottom: 12),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  SvgPicture.asset(
+                                    'assets/images/circular_tick.svg',
+                                    width: 22,
+                                    height: 22,
                                   ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-
-                        if (job?.hoursPerDay != null) ...[
-                          const SizedBox(height: 16),
-                          const Divider(),
-                          const SizedBox(height: 16),
-
-                          Row(
-                            children: [
-                              SvgPicture.asset(
-                                'assets/images/circular_tick.svg',
-                                width: 22,
-                                height: 22,
-                              ),
-
-                              const SizedBox(width: 10),
-
-                              Expanded(
-                                child: Text(
-                                  "Hours Per Day : ${job!.hoursPerDay}",
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.w500,
+                                  const SizedBox(width: 10),
+                                  Expanded(
+                                    child: Text(
+                                      requirement,
+                                      style: const TextStyle(height: 1.5),
+                                    ),
                                   ),
-                                ),
+                                ],
                               ),
-                            ],
-                          ),
-                        ],
-
-                        if (job?.hourlyRate != null) ...[
-                          const SizedBox(height: 16),
-                          const Divider(),
-                          const SizedBox(height: 16),
-
-                          Row(
-                            children: [
-                              SvgPicture.asset(
-                                'assets/images/circular_tick.svg',
-                                width: 22,
-                                height: 22,
-                              ),
-
-                              const SizedBox(width: 10),
-
-                              Expanded(
-                                child: Text(
-                                  "Hourly Rate : ₹${job!.hourlyRate}",
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ],
-                    ),
-                  ),
-
-                  const SizedBox(height: 20),
-
-                  _card(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          "Posted By",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                          ),
-                        ),
-
-                        const SizedBox(height: 16),
-
-                        ListTile(
-                          contentPadding: EdgeInsets.zero,
-                          leading: CircleAvatar(
-                            radius: 24,
-                            child: Text(
-                              postedBy?.firstName
-                                      ?.substring(0, 1)
-                                      .toUpperCase() ??
-                                  "",
                             ),
+                          )
+                        else
+                          const Text(
+                            "No service requirements available",
+                            style: TextStyle(color: Colors.grey),
                           ),
-                          title: Text(
-                            "${postedBy?.firstName ?? ""} ${postedBy?.lastName ?? ""}",
-                            style: const TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          subtitle: Text(postedBy?.email ?? ""),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  const SizedBox(height: 20),
-
-                  _card(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          "Job Location Details",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                          ),
-                        ),
-
-                        const SizedBox(height: 16),
-
-                        _meta(
-                          Icons.location_on,
-                          "${location?.street1 ?? ""}, ${location?.street2 ?? ""}",
-                        ),
-
-                        const SizedBox(height: 10),
-
-                        _meta(
-                          Icons.location_city,
-                          "${location?.city ?? ""}, ${location?.state ?? ""}",
-                        ),
-
-                        const SizedBox(height: 10),
-
-                        _meta(Icons.pin_drop, location?.zipCode ?? ""),
-
-                        const SizedBox(height: 10),
-
-                        _meta(
-                          Icons.social_distance,
-                          "${location?.distanceKm ?? 0} km away",
-                        ),
                       ],
                     ),
                   ),
@@ -492,7 +298,7 @@ class _JobDetailWidgetState extends State<JobDetailWidget> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "Total Applicants - ${job?.applicationCount ?? 0}",
+                          "Total Applicants - ${applicants.length}",
                           style: const TextStyle(
                             fontWeight: FontWeight.w700,
                             fontSize: 16,
@@ -501,7 +307,7 @@ class _JobDetailWidgetState extends State<JobDetailWidget> {
 
                         const SizedBox(height: 16),
 
-                        if ((job?.applicationCount ?? 0) == 0)
+                        if (applicants.isEmpty)
                           const Center(
                             child: Padding(
                               padding: EdgeInsets.symmetric(vertical: 20),
@@ -516,10 +322,12 @@ class _JobDetailWidgetState extends State<JobDetailWidget> {
                           )
                         else
                           ListView.builder(
-                            itemCount: job?.applicationCount ?? 0,
+                            itemCount: applicants.length,
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
                             itemBuilder: (context, index) {
+                              final applicant = applicants[index];
+
                               return Padding(
                                 padding: const EdgeInsets.only(bottom: 12),
                                 child: Container(
@@ -533,34 +341,65 @@ class _JobDetailWidgetState extends State<JobDetailWidget> {
                                       CircleAvatar(
                                         radius: 28,
                                         backgroundColor: Colors.grey.shade300,
-                                        child: Text(
-                                          "${index + 1}",
-                                          style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
+                                        backgroundImage:
+                                            (applicant.profilePicture != null &&
+                                                applicant
+                                                    .profilePicture!
+                                                    .isNotEmpty)
+                                            ? NetworkImage(
+                                                applicant.profilePicture!,
+                                              )
+                                            : null,
+                                        child:
+                                            (applicant.profilePicture == null ||
+                                                applicant
+                                                    .profilePicture!
+                                                    .isEmpty)
+                                            ? Text(
+                                                (applicant
+                                                            .fullName
+                                                            ?.isNotEmpty ??
+                                                        false)
+                                                    ? applicant.fullName!
+                                                          .trim()
+                                                          .split(' ')
+                                                          .map((e) => e[0])
+                                                          .take(2)
+                                                          .join()
+                                                          .toUpperCase()
+                                                    : "",
+                                                style: const TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 16,
+                                                ),
+                                              )
+                                            : null,
                                       ),
 
                                       const SizedBox(width: 12),
 
-                                      const Expanded(
+                                      Expanded(
                                         child: Column(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
                                             Text(
-                                              "Applicant",
-                                              style: TextStyle(
+                                              applicant.fullName ??
+                                                  "Unknown Applicant",
+                                              style: const TextStyle(
                                                 fontWeight: FontWeight.bold,
                                                 fontSize: 15,
                                               ),
                                             ),
 
-                                            SizedBox(height: 4),
+                                            const SizedBox(height: 4),
 
                                             Text(
-                                              "Waiting for applicant details",
-                                              style: TextStyle(
+                                              applicant
+                                                      .applicationStatus
+                                                      ?.name ??
+                                                  "Application Submitted",
+                                              style: const TextStyle(
                                                 color: _secondary,
                                                 fontSize: 13,
                                               ),
@@ -570,7 +409,9 @@ class _JobDetailWidgetState extends State<JobDetailWidget> {
                                       ),
 
                                       IconButton(
-                                        onPressed: () {},
+                                        onPressed: () {
+                                          // TODO: Chat
+                                        },
                                         icon: const Icon(
                                           Icons.chat_bubble_outline,
                                           color: _secondary,
