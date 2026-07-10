@@ -25,8 +25,8 @@ class ClientJobDetailBloc
       final response = await jobsRepository.clientJobDetailRequest(
         clientJobDetailRequestModel: ClientJobDetailRequestModel(
           jobId: event.jobId,
-          latitude: event.latitude,
-          longitude: event.longitude,
+          applicantsPage: event.applicantsPage,
+          applicantsLimit: event.applicantsLimit,
         ),
       );
 

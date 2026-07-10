@@ -1,19 +1,19 @@
 class ClientJobDetailRequestModel {
   final int jobId;
-  final double latitude;
-  final double longitude;
+  final double applicantsPage;
+  final double applicantsLimit;
 
   ClientJobDetailRequestModel({
     required this.jobId,
-    required this.latitude,
-    required this.longitude,
+    required this. applicantsPage,
+    required this.applicantsLimit,
   });
 
   Map<String, dynamic> toJson() {
     return {
       "jobId": jobId,
-      "latitude": latitude,
-      "longitude": longitude,
+      "applicantsPage": applicantsPage,
+      "applicantsLimit": applicantsLimit,
     };
   }
 }

@@ -30,8 +30,6 @@ class ClientJobDetailPage extends StatelessWidget {
       )..add(
         FetchClientJobDetailEvent(
           jobId: jobId,
-          latitude: 13.0827,
-          longitude: 80.2707,
         ),
       ),
       child: const ClientJobDetailView(),

@@ -2,20 +2,20 @@ import 'package:equatable/equatable.dart';
 
 class FetchClientJobDetailEvent extends ClientJobDetailEvent {
   final int jobId;
-  final double latitude;
-  final double longitude;
+  final double applicantsPage;
+  final double applicantsLimit;
 
   const FetchClientJobDetailEvent({
     required this.jobId,
-    required this.latitude,
-    required this.longitude,
+     this.applicantsPage = 1,
+     this.applicantsLimit = 20,
   });
 
   @override
   List<Object?> get props => [
     jobId,
-    latitude,
-    longitude,
+    applicantsPage,
+    applicantsLimit,
   ];
 }
 

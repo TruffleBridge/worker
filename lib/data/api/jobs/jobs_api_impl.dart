@@ -93,7 +93,7 @@ class JobsApiImpl extends JobsApi {
   }) async {
     try {
       final response = await dio.post(
-        '/api/job/viewJobDetail',
+        '/api/client/viewJobDetail',
         data: clientJobDetailRequestModel.toJson(),
       );
 
