@@ -21,7 +21,7 @@ class CreateProfileAppBar extends StatelessWidget
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      backgroundColor: Color(0xFFF1F1F1),
+      backgroundColor: const Color(0xFFF1F1F1),
       surfaceTintColor: AppColors.background,
       elevation: 0,
       scrolledUnderElevation: 0,
@@ -29,7 +29,9 @@ class CreateProfileAppBar extends StatelessWidget
       titleSpacing: 0,
       leadingWidth: 56,
       leading: Padding(
-        padding: const EdgeInsets.only(left: AppDimensions.paddingS),
+        padding: const EdgeInsets.only(
+          left: AppDimensions.paddingS,
+        ),
         child: IconButton(
           onPressed: onBack,
           padding: EdgeInsets.zero,
@@ -49,15 +51,21 @@ class CreateProfileAppBar extends StatelessWidget
           ),
         ),
       ),
-      title: Text(title, style: NdisThemeStyle.headlineMedium),
+      title: Text(
+        title,
+        style: NdisThemeStyle.headlineMedium,
+      ),
       actions: [
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          padding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 8,
+          ),
           child: InkWell(
             onTap: () {
               context.go(AppRoutes.clientHome);
             },
-            child: Text('Skip'),
+            child: const Text('Skip'),
           ),
         ),
       ],
@@ -95,7 +103,9 @@ class StepProgressBar extends StatelessWidget {
               ),
               height: 4,
               decoration: BoxDecoration(
-                color: isActive ? AppColors.primary : AppColors.trackInactive,
+                color: isActive
+                    ? AppColors.primary
+                    : AppColors.trackInactive,
                 borderRadius: BorderRadius.circular(999),
               ),
             ),
@@ -137,8 +147,12 @@ class LabeledField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final baseBorder = OutlineInputBorder(
-      borderRadius: BorderRadius.circular(AppDimensions.radiusM),
-      borderSide: const BorderSide(color: AppColors.cardBorder),
+      borderRadius: BorderRadius.circular(
+        AppDimensions.radiusM,
+      ),
+      borderSide: const BorderSide(
+        color: AppColors.cardBorder,
+      ),
     );
 
     return Column(
@@ -167,16 +181,22 @@ class LabeledField extends StatelessWidget {
           readOnly: readOnly,
           onTap: onTap,
           maxLines: maxLines,
-          style: NdisThemeStyle.bodyMedium.copyWith(color: Color(0xFF99A1AF)),
+          style: NdisThemeStyle.bodyMedium.copyWith(
+            color: const Color(0xFF99A1AF),
+          ),
           decoration: InputDecoration(
             hintText: hint,
             hintStyle: NdisThemeStyle.hint,
             prefixIcon: icon != null
-                ? Icon(icon, size: 18, color: AppColors.textHint)
+                ? Icon(
+              icon,
+              size: 18,
+              color: AppColors.textHint,
+            )
                 : null,
             suffixIcon: suffix,
             filled: true,
-            fillColor: Color(0xFFF9FAFB),
+            fillColor: const Color(0xFFF9FAFB),
             contentPadding: const EdgeInsets.symmetric(
               horizontal: 12,
               vertical: 14,
@@ -211,12 +231,19 @@ class UploadRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(bottom: AppDimensions.paddingS),
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      margin: const EdgeInsets.only(
+        bottom: AppDimensions.paddingS,
+      ),
+      padding: const EdgeInsets.symmetric(
+        horizontal: 14,
+        vertical: 12,
+      ),
       decoration: BoxDecoration(
         color: AppColors.white,
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: AppColors.cardBorder),
+        border: Border.all(
+          color: AppColors.cardBorder,
+        ),
       ),
       child: Row(
         children: [
@@ -224,49 +251,43 @@ class UploadRow extends StatelessWidget {
             child: Text(
               label,
               style: NdisThemeStyle.bodyMedium.copyWith(
-                color: uploaded ? AppColors.textPrimary : AppColors.textHint,
+                color: uploaded
+                    ? AppColors.textPrimary
+                    : AppColors.textHint,
               ),
             ),
           ),
-          Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: Color(0xFFE5E7EB)),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                children: [
-                  SvgPicture.asset('assets/images/upload_icon.svg'),
-                  SizedBox(width: 10),
-                  Text(
-                    'Upload',
-                    style: NdisThemeStyle.bodyMedium.copyWith(
-                      color: Color(0xFF4A5565),
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
+          InkWell(
+            onTap: onUpload,
+            borderRadius: BorderRadius.circular(10),
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(
+                  color: const Color(0xFFE5E7EB),
+                ),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(8),
+                child: Row(
+                  children: [
+                    SvgPicture.asset(
+                      'assets/images/upload_icon.svg',
                     ),
-                  ),
-                ],
+                    const SizedBox(width: 10),
+                    Text(
+                      'Upload',
+                      style: NdisThemeStyle.bodyMedium.copyWith(
+                        color: const Color(0xFF4A5565),
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
-          // TextButton.icon(
-          //   onPressed: onUpload,
-          //   style: TextButton.styleFrom(
-          //     foregroundColor: AppColors.primary,
-          //     padding: const EdgeInsets.symmetric(horizontal: 4),
-          //     tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-          //   ),
-          //   icon: SvgPicture.asset('assets/images/upload_icon.svg'),
-          //   label: Text(
-          //     'Upload',
-          //     style: NdisThemeStyle.bodyMedium.copyWith(
-          //       fontWeight: FontWeight.w600,
-          //       color: AppColors.primary,
-          //     ),
-          //   ),
-          // ),
         ],
       ),
     );
@@ -298,7 +319,10 @@ class PrimaryButton extends StatelessWidget {
             Text(label),
             if (showChevron) ...[
               const SizedBox(width: 6),
-              const Icon(Icons.chevron_right, size: 18),
+              const Icon(
+                Icons.chevron_right,
+                size: 18,
+              ),
             ],
           ],
         ),
@@ -326,9 +350,13 @@ class SecondaryButton extends StatelessWidget {
         onPressed: onPressed,
         style: OutlinedButton.styleFrom(
           foregroundColor: AppColors.textPrimary,
-          side: const BorderSide(color: AppColors.cardBorder),
+          side: const BorderSide(
+            color: AppColors.cardBorder,
+          ),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppDimensions.radiusM),
+            borderRadius: BorderRadius.circular(
+              AppDimensions.radiusM,
+            ),
           ),
         ),
         child: Text(

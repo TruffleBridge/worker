@@ -29,26 +29,16 @@ class ProfileSuccessScreen extends StatelessWidget {
             children: [
               const SizedBox(height: 32),
 
-              // Container(
-              //   width: 84,
-              //   height: 84,
-              //   decoration: const BoxDecoration(
-              //     color: AppColors.successBg,
-              //     shape: BoxShape.circle,
-              //   ),
-              //   child: const Icon(
-              //     Icons.check,
-              //     color: AppColors.success,
-              //     size: 44,
-              //   ),
-              // ),
-              SvgPicture.asset('assets/images/success_tick_icon.svg'),
+              SvgPicture.asset(
+                'assets/images/success_tick_icon.svg',
+              ),
+
               const SizedBox(height: AppDimensions.paddingL),
 
               Text(
                 'Profile Successfully Created!',
                 style: NdisThemeStyle.headlineLarge.copyWith(
-                  color: Color(0xFF101828),
+                  color: const Color(0xFF101828),
                   fontWeight: FontWeight.w700,
                   fontSize: 18,
                 ),
@@ -60,7 +50,7 @@ class ProfileSuccessScreen extends StatelessWidget {
               Text(
                 'Welcome to Nimora. Your profile is ready, and you can now start finding the right support workers for your needs.',
                 style: NdisThemeStyle.bodyMedium.copyWith(
-                  color: Color(0xFF7F7F7F),
+                  color: const Color(0xFF7F7F7F),
                   fontSize: 14,
                   fontWeight: FontWeight.w400,
                 ),
@@ -72,7 +62,8 @@ class ProfileSuccessScreen extends StatelessWidget {
               _ActionCard(
                 icon: AssetSVGImages.needSupport,
                 title: 'Find Workers',
-                subtitle: 'Browse verified support workers in your area.',
+                subtitle:
+                'Browse verified support workers in your area.',
                 onTap: onFindWorkers,
               ),
 
@@ -81,7 +72,8 @@ class ProfileSuccessScreen extends StatelessWidget {
               _ActionCard(
                 icon: AssetSVGImages.wantToWork,
                 title: 'Post a Job',
-                subtitle: 'Create a job post to let workers come to you.',
+                subtitle:
+                'Create a job post to let workers come to you.',
                 onTap: onPostJob,
               ),
 
@@ -95,7 +87,10 @@ class ProfileSuccessScreen extends StatelessWidget {
 
               const SizedBox(height: AppDimensions.paddingM),
 
-              SecondaryButton(label: 'Back', onPressed: onBack),
+              SecondaryButton(
+                label: 'Back',
+                onPressed: onBack,
+              ),
 
               const SizedBox(height: AppDimensions.paddingS),
             ],
@@ -123,14 +118,20 @@ class _ActionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(AppDimensions.radiusM),
+      borderRadius: BorderRadius.circular(
+        AppDimensions.radiusM,
+      ),
       child: Container(
         width: double.infinity,
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
           color: AppColors.white,
-          borderRadius: BorderRadius.circular(AppDimensions.radiusM),
-          border: Border.all(color: AppColors.cardBorder),
+          borderRadius: BorderRadius.circular(
+            AppDimensions.radiusM,
+          ),
+          border: Border.all(
+            color: AppColors.cardBorder,
+          ),
         ),
         child: Row(
           children: [
@@ -138,16 +139,22 @@ class _ActionCard extends StatelessWidget {
               width: 40,
               height: 40,
               padding: const EdgeInsets.all(4),
-
               decoration: BoxDecoration(
                 color: title == 'Find Workers'
                     ? const Color(0xFFCFF3FF)
                     : const Color(0xFF1F95F2).withOpacity(0.15),
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: SvgPicture.asset(icon, fit: BoxFit.contain),
+              child: SvgPicture.asset(
+                icon,
+                fit: BoxFit.contain,
+              ),
             ),
-            const SizedBox(width: AppDimensions.paddingM - 4),
+
+            const SizedBox(
+              width: AppDimensions.paddingM - 4,
+            ),
+
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -155,7 +162,7 @@ class _ActionCard extends StatelessWidget {
                   Text(
                     title,
                     style: NdisThemeStyle.label.copyWith(
-                      color: Color(0xFF101828),
+                      color: const Color(0xFF101828),
                       fontWeight: FontWeight.w700,
                       fontSize: 14,
                     ),
@@ -164,7 +171,7 @@ class _ActionCard extends StatelessWidget {
                   Text(
                     subtitle,
                     style: NdisThemeStyle.bodyMedium.copyWith(
-                      color: Color(0xFF6A7282),
+                      color: const Color(0xFF6A7282),
                       fontWeight: FontWeight.w500,
                       fontSize: 12,
                     ),

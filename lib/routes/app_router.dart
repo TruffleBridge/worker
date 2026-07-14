@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:nimora_worker/presentation/pages/client_pages/create_profile/create_profile_page.dart';
 import 'package:nimora_worker/presentation/pages/client_pages/home/client_home_shell.dart';
 import 'package:nimora_worker/presentation/pages/client_pages/job_post/job_post_page.dart';
 import 'package:nimora_worker/presentation/pages/client_pages/login/login_page.dart';
@@ -7,13 +8,13 @@ import 'package:nimora_worker/presentation/pages/client_pages/sign_in/sign_in_sp
 import 'package:nimora_worker/presentation/pages/client_pages/worker_details/worker_detail_page.dart';
 import 'package:nimora_worker/presentation/pages/worker_pages/ai_assistant/AiAssistantPage.dart';
 import 'package:nimora_worker/presentation/pages/worker_pages/home/home_shell.dart';
+import 'package:nimora_worker/presentation/pages/worker_pages/location/location_screen.dart';
 import 'package:nimora_worker/presentation/pages/worker_pages/login/login_page.dart';
 import 'package:nimora_worker/presentation/pages/worker_pages/onboarding/choose_roles_page.dart';
 import 'package:nimora_worker/presentation/pages/worker_pages/onboarding/onboarding_page.dart';
 import 'package:nimora_worker/presentation/pages/worker_pages/sign_in_splash/sign_in_splash_page.dart';
 import 'package:nimora_worker/presentation/pages/worker_pages/splash/splash_page.dart';
 import 'package:nimora_worker/presentation/pages/client_pages/login/client_otp_page.dart';
-import 'package:nimora_worker/presentation/widgets/client_widgets/create_profile/create_profile_flow.dart';
 import 'package:nimora_worker/presentation/widgets/client_widgets/job_post/job_post_success_widget.dart';
 import 'package:nimora_worker/presentation/widgets/worker_widgets/more/account_setting_page.dart';
 import 'package:nimora_worker/presentation/widgets/worker_widgets/more/byo_clients_page.dart';
@@ -57,6 +58,7 @@ abstract class AppRoutes {
   static const String incidentForm = '/worker-incident-form';
   static const String myRewards = '/worker-my-rewards';
   static const String byoClients = '/worker-byo-clients';
+  static const String locationScreen = '/location-screen';
 
   //Client
   static const String clientSignInSplash = '/client-sign-in-splash';
@@ -97,6 +99,15 @@ final GoRouter appRouter = GoRouter(
       pageBuilder: (context, state) => CustomTransitionPage(
         key: state.pageKey,
         child: const OnboardingPage(),
+        transitionsBuilder: _fadeTransition,
+      ),
+    ),
+    GoRoute(
+      path: AppRoutes.locationScreen,
+      name: 'location-screen',
+      pageBuilder: (context, state) => CustomTransitionPage(
+        key: state.pageKey,
+        child: const LocationScreen(),
         transitionsBuilder: _fadeTransition,
       ),
     ),
@@ -372,7 +383,7 @@ final GoRouter appRouter = GoRouter(
       name: 'clientCreateProfile',
       pageBuilder: (context, state) => CustomTransitionPage(
         key: state.pageKey,
-        child: const CreateProfileFlow(),
+        child: const CreateProfilePage(),
         transitionsBuilder: _fadeTransition,
       ),
     ),
