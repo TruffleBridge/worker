@@ -65,7 +65,7 @@ class Job extends Equatable {
 
   final String postedAgo;
 
-  final int applicationsCount;
+  final int applicationCount;
 
   final List<JobBadge> badges;
 
@@ -115,7 +115,7 @@ class Job extends Equatable {
     required this.sessionsPerWeek,
     required this.hoursPerWeek,
     required this.postedAgo,
-    required this.applicationsCount,
+    required this.applicationCount,
     required this.badges,
 
     this.isSaved = false,
@@ -273,7 +273,7 @@ class Job extends Equatable {
       sessionsPerWeek: sessionsCount,
       hoursPerWeek: hoursPerDay.toInt(),
       postedAgo: postedAgo,
-      applicationsCount: _toInt(json['applicationsCount'] ?? 0),
+      applicationCount: _toInt(json['applicationCount'] ?? 0),
       badges: badges,
       clientDescription: json['description'] as String?,
       clientProfilePicture: json['clientProfilePicture'] as String?,
@@ -319,7 +319,7 @@ class Job extends Equatable {
       sessionsPerWeek: sessionsPerWeek,
       hoursPerWeek: hoursPerWeek,
       postedAgo: postedAgo,
-      applicationsCount: applicationsCount,
+      applicationCount: applicationCount,
       badges: badges,
       isSaved: isSaved ?? this.isSaved,
       status: status ?? this.status,

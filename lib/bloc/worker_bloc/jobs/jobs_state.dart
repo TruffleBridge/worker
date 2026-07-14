@@ -2,17 +2,17 @@ part of 'jobs_bloc.dart';
 
 abstract class JobsState extends Equatable {
   const JobsState();
+
+  @override
+  List<Object?> get props => [];
 }
 
 final class JobsInitial extends JobsState {
-  @override
-  List<Object> get props => [];
+  const JobsInitial();
 }
 
 class JobsLoading extends JobsState {
   const JobsLoading();
-  @override
-  List<Object> get props => [];
 }
 
 class JobsSuccess extends JobsState {
@@ -39,26 +39,21 @@ class JobsSuccess extends JobsState {
   }) {
     return JobsSuccess(
       jobs: jobs ?? this.jobs,
-      filteredJobs:
-      filteredJobs ?? this.filteredJobs,
+      filteredJobs: filteredJobs ?? this.filteredJobs,
       query: query ?? this.query,
-      selectedJob:
-      selectedJob ?? this.selectedJob,
-      selectedTab:
-      selectedTab ?? this.selectedTab,
+      selectedJob: selectedJob ?? this.selectedJob,
+      selectedTab: selectedTab ?? this.selectedTab,
     );
-
   }
 
   @override
-  List<Object?> get props =>
-      [
-        jobs,
-        filteredJobs,
-        query,
-        selectedJob,
-        selectedTab,
-      ];
+  List<Object?> get props => [
+    jobs,
+    filteredJobs,
+    query,
+    selectedJob,
+    selectedTab,
+  ];
 }
 
 class JobsError extends JobsState {
@@ -72,8 +67,6 @@ class JobsError extends JobsState {
 
 class JobDetailLoading extends JobsState {
   const JobDetailLoading();
-  @override
-  List<Object> get props => [];
 }
 
 class JobsDetailsOnLoadedState extends JobsState {
@@ -86,30 +79,38 @@ class JobsDetailsOnLoadedState extends JobsState {
 }
 
 class JobAppliedLoadingState extends JobsState {
-  const JobAppliedLoadingState();
+  final JobDetailResponseModel jobDetail;
+
+  const JobAppliedLoadingState({
+    required this.jobDetail,
+  });
 
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => [jobDetail];
 }
 
 class JobAppliedSuccessState extends JobsState {
+  final JobDetailResponseModel jobDetail;
   final JobAppliedResponseModel response;
 
   const JobAppliedSuccessState({
+    required this.jobDetail,
     required this.response,
   });
 
   @override
-  List<Object?> get props => [response];
+  List<Object?> get props => [jobDetail, response];
 }
 
 class JobAppliedErrorState extends JobsState {
+  final JobDetailResponseModel jobDetail;
   final String message;
 
   const JobAppliedErrorState({
+    required this.jobDetail,
     required this.message,
   });
 
   @override
-  List<Object?> get props => [message];
+  List<Object?> get props => [jobDetail, message];
 }

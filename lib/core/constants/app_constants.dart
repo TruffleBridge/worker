@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class AppConstants {
   static const String appName = 'Nimora';
   /// Root URL for every API call.
-  static const String baseUrl = 'https://app-cd8d2a6c-932d-4b7f-95c9-26bfb1145c77.cleverapps.io';
+  static const String baseUrl = 'http://52.66.162.16';
 
   /// Connection timeout in milliseconds.
   static const int connectTimeoutMs = 30000;

@@ -40,6 +40,7 @@ class WorkerSignInSplashPage extends StatelessWidget {
         BlocProvider(
           create: (_) => WorkerLoginBloc(
             loginRepository: loginRepository,
+            tokenStorage: AppDependencies.tokenStorage,
           )..add(LoginOnLoadEvent()),
         ),
       ],

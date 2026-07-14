@@ -6,7 +6,8 @@ import 'package:nimora_worker/core/constants/nimora_colors.dart';
 import 'package:nimora_worker/core/enums/job_tab.dart';
 import 'package:nimora_worker/core/theme/app_theme.dart';
 import 'package:nimora_worker/domain/model/view_model/job.dart';
-import 'package:nimora_worker/presentation/widgets/worker_widgets/jobs/job_card.dart';
+import 'package:nimora_worker/presentation/widgets/worker_widgets/jobs/all_jobs_widget.dart';
+import 'package:nimora_worker/presentation/widgets/worker_widgets/jobs/job_tracker_widget.dart';
 
 class JobsList extends StatelessWidget {
   final List<Job> jobs;
@@ -22,15 +23,15 @@ class JobsList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
-      itemCount: jobs.length + 1,
-      itemBuilder: (context, index) {
-        if (index == 0) {
-          return Column(
+    return Column(
+      children: [
+        /// Header section
+        Padding(
+          padding: const EdgeInsets.fromLTRB(20, 8, 20, 0),
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Tabs + Filter
+              /// Tabs + Filter
               Row(
                 children: [
                   Expanded(
@@ -43,13 +44,15 @@ class JobsList extends StatelessWidget {
                       ),
                       child: Row(
                         children: [
-                          // All Jobs
+                          /// All Jobs
                           Expanded(
                             child: GestureDetector(
                               onTap: () {
-                                context.read<JobsBloc>().add(
-                                  const JobsTabChanged(JobsTab.allJobs),
-                                );
+                                if (selectedTab != JobsTab.allJobs) {
+                                  context.read<JobsBloc>().add(
+                                    const JobsTabChanged(JobsTab.allJobs),
+                                  );
+                                }
                               },
                               child: AnimatedContainer(
                                 duration: const Duration(milliseconds: 250),
@@ -85,13 +88,15 @@ class JobsList extends StatelessWidget {
                             ),
                           ),
 
-                          // Job Tracker
+                          /// Job Tracker
                           Expanded(
                             child: GestureDetector(
                               onTap: () {
-                                // context.read<JobsBloc>().add(
-                                //   const JobsTabChanged(JobsTab.tracker),
-                                // );
+                                if (selectedTab != JobsTab.tracker) {
+                                  context.read<JobsBloc>().add(
+                                    const JobsTabChanged(JobsTab.tracker),
+                                  );
+                                }
                               },
                               child: AnimatedContainer(
                                 duration: const Duration(milliseconds: 250),
@@ -133,6 +138,7 @@ class JobsList extends StatelessWidget {
 
                   const SizedBox(width: 14),
 
+                  /// Filter button
                   Container(
                     width: 50,
                     height: 50,
@@ -153,74 +159,29 @@ class JobsList extends StatelessWidget {
 
               const SizedBox(height: 24),
 
-              // Total + Distance
-              Row(
-                children: [
-                  Text(
-                    'Total Jobs - $total',
-                    style: NdisThemeStyle.bodyMedium.copyWith(
-                      fontWeight: FontWeight.w700,
-                      color: AppColors.textPrimary,
-                    ),
-                  ),
-
-                  const Spacer(),
-
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 14,
-                      vertical: 10,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(22),
-                      border: Border.all(color: AppColors.grey200),
-                    ),
-                    child: Row(
-                      children: [
-                        Text(
-                          'Distance : 5 km',
-                          style: NdisThemeStyle.bodyMedium.copyWith(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-
-                        const SizedBox(width: 4),
-
-                        const Icon(Icons.keyboard_arrow_down_rounded, size: 18),
-                      ],
-                    ),
-                  ),
-                ],
+              /// Total jobs text
+              Text(
+                selectedTab == JobsTab.allJobs
+                    ? 'Total Jobs - $total'
+                    : 'Total Jobs - $total',
+                style: NdisThemeStyle.bodyMedium.copyWith(
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.textPrimary,
+                ),
               ),
 
               const SizedBox(height: 22),
             ],
-          );
-        }
-
-        final job = jobs[index - 1];
-
-        return Padding(
-          padding: const EdgeInsets.only(bottom: 16),
-          child: JobCard(
-            job: job,
-
-            // isTracker:
-            // selectedTab ==
-            //     JobsTab.tracker,
-            onTap: () {
-              context.read<JobsBloc>().add(
-                JobDetailRequested(job.id, 13.0827, 80.2707),
-              );
-            },
-            onSave: () {
-              context.read<JobsBloc>().add(JobSaveToggled(job.id));
-            },
           ),
-        );
-      },
+        ),
+
+        /// Tab body
+        Expanded(
+          child: selectedTab == JobsTab.allJobs
+              ? AllJobsListView(jobs: jobs)
+              : JobTrackerListView(jobs: jobs),
+        ),
+      ],
     );
   }
 }

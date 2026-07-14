@@ -5,45 +5,61 @@ class JobPostStepNavigation extends StatelessWidget {
     super.key,
     required this.onNext,
     this.onSaveDraft,
-
   });
+
   final VoidCallback onNext;
   final VoidCallback? onSaveDraft;
-
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Expanded(
+        if (onSaveDraft != null)
+          Expanded(
             child: OutlinedButton(
               onPressed: onSaveDraft,
               style: OutlinedButton.styleFrom(
                 minimumSize: const Size.fromHeight(52),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30),
+                  borderRadius: BorderRadius.circular(14),
                 ),
+                side: BorderSide(color: Colors.grey.shade300),
               ),
               child: const Text(
-                'Save as Draft',
-                style: TextStyle(color: Colors.black),
+                'Back',
+                style: TextStyle(
+                  color: Colors.black87,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
           ),
-          const SizedBox(width: 16),
+        if (onSaveDraft != null) const SizedBox(width: 12),
         Expanded(
           child: ElevatedButton(
             onPressed: onNext,
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.teal,
+              backgroundColor: const Color(0xFF0B7A75),
+              foregroundColor: Colors.white,
               minimumSize: const Size.fromHeight(52),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(30),
+                borderRadius: BorderRadius.circular(14),
               ),
+              elevation: 0,
             ),
-            child: const Text(
-              'Next',
-              style: TextStyle(color: Colors.white),
+            child: const Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'Continue',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 15,
+                  ),
+                ),
+                SizedBox(width: 6),
+                Icon(Icons.arrow_forward, size: 18),
+              ],
             ),
           ),
         ),
@@ -57,61 +73,63 @@ class JobPostFinalNavigation extends StatelessWidget {
     super.key,
     required this.onPostJob,
     required this.onBack,
+    this.isLoading = false,
   });
 
-  final VoidCallback onPostJob;
+  final VoidCallback? onPostJob;
   final VoidCallback onBack;
+  final bool isLoading;
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return Row(
       children: [
-        SizedBox(
-          width: double.infinity,
-          child: ElevatedButton(
-            onPressed: onPostJob,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.teal,
-              minimumSize: const Size.fromHeight(52),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(30),
-              ),
-            ),
-            child: const Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  'Post Job',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 16,
-                  ),
-                ),
-                SizedBox(width: 4),
-                Icon(Icons.chevron_right, color: Colors.white),
-              ],
-            ),
-          ),
-        ),
-        const SizedBox(height: 12),
-        SizedBox(
-          width: double.infinity,
+        Expanded(
           child: OutlinedButton(
-            onPressed: onBack,
+            onPressed: isLoading ? null : onBack,
             style: OutlinedButton.styleFrom(
               minimumSize: const Size.fromHeight(52),
-              backgroundColor: Colors.grey.shade100,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(30),
+                borderRadius: BorderRadius.circular(14),
               ),
+              side: BorderSide(color: Colors.grey.shade300),
             ),
             child: const Text(
               'Back',
               style: TextStyle(
-                color: Colors.black,
+                color: Colors.black87,
                 fontWeight: FontWeight.w600,
-                fontSize: 16,
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: ElevatedButton(
+            onPressed: isLoading ? null : onPostJob,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF0B7A75),
+              foregroundColor: Colors.white,
+              minimumSize: const Size.fromHeight(52),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(14),
+              ),
+              elevation: 0,
+            ),
+            child: isLoading
+                ? const SizedBox(
+              width: 22,
+              height: 22,
+              child: CircularProgressIndicator(
+                strokeWidth: 2.4,
+                color: Colors.white,
+              ),
+            )
+                : const Text(
+              'Post Job',
+              style: TextStyle(
+                fontWeight: FontWeight.w600,
+                fontSize: 15,
               ),
             ),
           ),

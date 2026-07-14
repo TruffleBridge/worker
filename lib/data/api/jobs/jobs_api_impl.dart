@@ -3,7 +3,11 @@ import 'package:nimora_worker/data/api/jobs/jobs_api.dart';
 import 'package:nimora_worker/domain/model/request/jobs_nearby_request_model.dart';
 import 'package:nimora_worker/domain/model/response/job_applied_response_model.dart';
 import 'package:nimora_worker/domain/model/response/job_detail_response_model.dart';
+import 'package:nimora_worker/domain/model/response/job_tracker_response_model.dart';
 import 'package:nimora_worker/domain/model/response/jobs_nearby_response_model.dart';
+
+import '../../../domain/model/request/job_listing/job_listing_request_model.dart';
+import '../../../domain/model/response/job_listing/job_listing_response_model.dart';
 
 class JobsApiImpl extends JobsApi {
   final Dio dio;
@@ -21,6 +25,32 @@ class JobsApiImpl extends JobsApi {
       );
 
       return JobsNearbyResponseModel.fromJson(
+        response.data as Map<String, dynamic>,
+      );
+    } on DioException catch (e) {
+      throw Exception(e.response?.data?['message'] ?? 'Failed to load jobs');
+    }
+  }
+
+  @override
+  Future<JobTrackerResponseModel> jobTrackerRequest({
+    required int page,
+    required int limit,
+    int? applicationStatusId,
+    String? search,
+  }) async {
+    try {
+      final response = await dio.post(
+        '/api/job/jobTrackerList',
+        data: {
+          'page': page,
+          'limit': limit,
+          'search': search,
+          'applicationStatusId': applicationStatusId,
+        },
+      );
+
+      return JobTrackerResponseModel.fromJson(
         response.data as Map<String, dynamic>,
       );
     } on DioException catch (e) {
@@ -63,4 +93,24 @@ class JobsApiImpl extends JobsApi {
       throw Exception(e.response?.data?['message'] ?? 'Failed to load jobs');
     }
   }
+  @override
+  Future<MyJobsResponseModel> myJobsListRequest({
+    required MyJobsRequestModel myJobsRequestModel,
+  }) async {
+    try {
+      final response = await dio.post(
+        '/api/client/myJobsList',
+        data: myJobsRequestModel.toJson(),
+      );
+
+      return MyJobsResponseModel.fromJson(
+        response.data as Map<String, dynamic>,
+      );
+    } on DioException catch (e) {
+      throw Exception(
+        e.response?.data?['message'] ?? 'Failed to load my jobs list',
+      );
+    }
+  }
 }
+

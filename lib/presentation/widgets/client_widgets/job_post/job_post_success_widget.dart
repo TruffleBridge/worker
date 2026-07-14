@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:nimora_worker/routes/app_router.dart';
 
 class JobPostSuccessScreen extends StatelessWidget {
   const JobPostSuccessScreen({super.key});
@@ -14,7 +16,6 @@ class JobPostSuccessScreen extends StatelessWidget {
             children: [
               const Spacer(),
 
-              // Background Circle
               Stack(
                 alignment: Alignment.center,
                 children: [
@@ -26,7 +27,6 @@ class JobPostSuccessScreen extends StatelessWidget {
                       shape: BoxShape.circle,
                     ),
                   ),
-
                   Positioned(
                     left: 2,
                     bottom: 10,
@@ -39,7 +39,6 @@ class JobPostSuccessScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-
                   Positioned(
                     right: 5,
                     top: 5,
@@ -52,7 +51,6 @@ class JobPostSuccessScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-
                   Container(
                     width: 52,
                     height: 52,
@@ -103,7 +101,7 @@ class JobPostSuccessScreen extends StatelessWidget {
                     ),
                   ),
                   onPressed: () {
-                    Navigator.popUntil(context, (route) => route.isFirst);
+                    context.go(AppRoutes.clientHome);
                   },
                   child: const Text(
                     "View My Job Post",
