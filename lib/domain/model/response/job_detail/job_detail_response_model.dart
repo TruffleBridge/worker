@@ -429,6 +429,7 @@ class ApplicantModel {
   final dynamic distanceKm;
   final String? distanceLabel;
   final String? appliedAt;
+  final String? bookingAction;
   final ApplicationStatusModel? applicationStatus;
 
   ApplicantModel({
@@ -442,6 +443,7 @@ class ApplicantModel {
     this.distanceLabel,
     this.appliedAt,
     this.applicationStatus,
+    this.bookingAction,
   });
 
   factory ApplicantModel.fromJson(Map<String, dynamic> json) {
@@ -455,6 +457,7 @@ class ApplicantModel {
       distanceKm: json['distanceKm'],
       distanceLabel: json['distanceLabel'] as String?,
       appliedAt: json['appliedAt'] as String?,
+      bookingAction: json['bookingAction'] as String?,
       applicationStatus: json['applicationStatus'] is Map<String, dynamic>
           ? ApplicationStatusModel.fromJson(
         json['applicationStatus'] as Map<String, dynamic>,

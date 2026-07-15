@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nimora_worker/bloc/worker_bloc/notifications/notifications_bloc.dart';
-import '../../../widgets/worker_widgets/notifications/notifications_card.dart';
+import 'package:nimora_worker/core/theme/app_theme.dart';
+import 'package:nimora_worker/presentation/widgets/worker_widgets/notifications/notifications_card.dart';
 
 class NotificationsView extends StatelessWidget {
   const NotificationsView({
@@ -16,21 +17,24 @@ class NotificationsView extends StatelessWidget {
             previous.errorMessage != current.errorMessage;
       },
       listener: (context, state) {
-        if (state.successMessage != null) {
+        final successMessage = state.successMessage;
+        final errorMessage = state.errorMessage;
+
+        if (successMessage != null) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
-                state.successMessage!,
+                successMessage,
               ),
             ),
           );
         }
 
-        if (state.errorMessage != null) {
+        if (errorMessage != null) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
-                state.errorMessage!,
+                errorMessage,
               ),
             ),
           );
@@ -42,6 +46,7 @@ class NotificationsView extends StatelessWidget {
           appBar: AppBar(
             backgroundColor: const Color(0xFFF3F4F6),
             elevation: 0,
+            surfaceTintColor: Colors.transparent,
             leading: IconButton(
               onPressed: () {
                 Navigator.pop(context);
@@ -49,25 +54,28 @@ class NotificationsView extends StatelessWidget {
               icon: const Icon(
                 Icons.arrow_back_ios_new,
                 size: 18,
+                color: AppColors.textPrimary,
               ),
             ),
-            title: const Text(
+            title: Text(
               'Notifications',
-              style: TextStyle(
+              style: NdisThemeStyle.headlineMedium.copyWith(
                 fontSize: 18,
                 fontWeight: FontWeight.w700,
               ),
             ),
           ),
-          body: RefreshIndicator(
-            onRefresh: () async {
-              context.read<NotificationBloc>().add(
-                const NotificationRequested(),
-              );
-            },
-            child: _buildBody(
-              context,
-              state,
+          body: SafeArea(
+            child: RefreshIndicator(
+              onRefresh: () async {
+                context.read<NotificationBloc>().add(
+                  const NotificationRequested(),
+                );
+              },
+              child: _buildBody(
+                context,
+                state,
+              ),
             ),
           ),
         );
@@ -95,6 +103,11 @@ class NotificationsView extends StatelessWidget {
           Center(
             child: Text(
               'No notifications',
+              style: TextStyle(
+                color: Color(0xFF6B7280),
+                fontSize: 14,
+                fontWeight: FontWeight.w400,
+              ),
             ),
           ),
         ],
@@ -103,35 +116,41 @@ class NotificationsView extends StatelessWidget {
 
     return ListView(
       physics: const AlwaysScrollableScrollPhysics(),
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.symmetric(
+        horizontal: 16,
+        vertical: 20,
+      ),
       children: [
-        const Text(
+        Text(
           'NEW REQUEST',
-          style: TextStyle(
+          style: NdisThemeStyle.bodyMedium.copyWith(
+            color: AppColors.textSecondary,
             fontSize: 11,
             fontWeight: FontWeight.w700,
             letterSpacing: 1,
           ),
         ),
         const SizedBox(
-          height: 14,
+          height: 12,
         ),
         ...state.notifications.map(
               (notification) {
             final jobId = notification.id;
-            final workerId = 2;
 
-            final isUpdating = state.isUpdating &&
-                state.updatingJobId == jobId;
+            // TODO: Replace with actual logged-in worker ID.
+            const workerId = 2;
+
+            final isUpdating =
+                state.isUpdating && state.updatingJobId == jobId;
 
             return Padding(
               padding: const EdgeInsets.only(
-                bottom: 14,
+                bottom: 12,
               ),
               child: NotificationCard(
                 notification: notification,
                 isUpdating: isUpdating,
-                onApprove: jobId == null || workerId == null
+                onApprove: jobId == null
                     ? null
                     : () {
                   context.read<NotificationBloc>().add(
@@ -141,7 +160,7 @@ class NotificationsView extends StatelessWidget {
                     ),
                   );
                 },
-                onDecline: jobId == null || workerId == null
+                onDecline: jobId == null
                     ? null
                     : () {
                   context.read<NotificationBloc>().add(
@@ -159,5 +178,3 @@ class NotificationsView extends StatelessWidget {
     );
   }
 }
-
-
