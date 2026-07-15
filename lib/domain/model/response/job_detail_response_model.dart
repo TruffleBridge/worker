@@ -24,48 +24,55 @@ class JobDetailResponseModel {
 
 class JobDetailData {
   JobDetailJob? job;
-  List<Location>? location;
-  List<Sessions>? sessions;
-  List<JobServiceCategories>? jobServiceCategories;
+  List<JobDetailLocation>? location;
+  List<JobDetailSessions>? sessions;
+  List<JobDetailServiceCategories>? jobServiceCategories;
   ServiceDetails? serviceDetails;
   PostedBy? postedBy;
   JobRequirements? jobRequirements;
 
-  JobDetailData(
-      {this.job,
-        this.location,
-        this.sessions,
-        this.jobServiceCategories,
-        this.serviceDetails,
-        this.postedBy,
-        this.jobRequirements});
+  JobDetailData({
+    this.job,
+    this.location,
+    this.sessions,
+    this.jobServiceCategories,
+    this.serviceDetails,
+    this.postedBy,
+    this.jobRequirements,
+  });
 
   JobDetailData.fromJson(Map<String, dynamic> json) {
     job = json['job'] != null ? JobDetailJob.fromJson(json['job']) : null;
+
     if (json['location'] != null) {
-      location = <Location>[];
+      location = <JobDetailLocation>[];
       json['location'].forEach((v) {
-        location!.add(Location.fromJson(v));
+        location!.add(JobDetailLocation.fromJson(v));
       });
     }
+
     if (json['sessions'] != null) {
-      sessions = <Sessions>[];
+      sessions = <JobDetailSessions>[];
       json['sessions'].forEach((v) {
-        sessions!.add(Sessions.fromJson(v));
+        sessions!.add(JobDetailSessions.fromJson(v));
       });
     }
+
     if (json['jobServiceCategories'] != null) {
-      jobServiceCategories = <JobServiceCategories>[];
+      jobServiceCategories = <JobDetailServiceCategories>[];
       json['jobServiceCategories'].forEach((v) {
-        jobServiceCategories!.add(JobServiceCategories.fromJson(v));
+        jobServiceCategories!.add(JobDetailServiceCategories.fromJson(v));
       });
     }
+
     serviceDetails = json['serviceDetails'] != null
         ? ServiceDetails.fromJson(json['serviceDetails'])
         : null;
+
     postedBy = json['postedBy'] != null
         ? PostedBy.fromJson(json['postedBy'])
         : null;
+
     jobRequirements = json['jobRequirements'] != null
         ? JobRequirements.fromJson(json['jobRequirements'])
         : null;
@@ -73,6 +80,7 @@ class JobDetailData {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
+
     if (job != null) {
       data['job'] = job!.toJson();
     }
@@ -83,8 +91,9 @@ class JobDetailData {
       data['sessions'] = sessions!.map((v) => v.toJson()).toList();
     }
     if (jobServiceCategories != null) {
-      data['jobServiceCategories'] =
-          jobServiceCategories!.map((v) => v.toJson()).toList();
+      data['jobServiceCategories'] = jobServiceCategories!
+          .map((v) => v.toJson())
+          .toList();
     }
     if (serviceDetails != null) {
       data['serviceDetails'] = serviceDetails!.toJson();
@@ -95,6 +104,7 @@ class JobDetailData {
     if (jobRequirements != null) {
       data['jobRequirements'] = jobRequirements!.toJson();
     }
+
     return data;
   }
 }
@@ -112,31 +122,32 @@ class JobDetailJob {
   String? updatedAt;
   int? applicationCount;
 
-  JobDetailJob(
-      {this.id,
-        this.title,
-        this.description,
-        this.category,
-        this.hourlyRate,
-        this.shift,
-        this.hoursPerDay,
-        this.postedBy,
-        this.createdAt,
-        this.updatedAt,
-        this.applicationCount});
+  JobDetailJob({
+    this.id,
+    this.title,
+    this.description,
+    this.category,
+    this.hourlyRate,
+    this.shift,
+    this.hoursPerDay,
+    this.postedBy,
+    this.createdAt,
+    this.updatedAt,
+    this.applicationCount,
+  });
 
   JobDetailJob.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
+    id = _toInt(json['id']);
     title = json['title'];
     description = json['description'];
     category = json['category'];
-    hourlyRate = json['hourlyRate'];
+    hourlyRate = _toInt(json['hourlyRate']);
     shift = json['shift'];
-    hoursPerDay = json['hoursPerDay'];
-    postedBy = json['postedBy'];
+    hoursPerDay = json['hoursPerDay']?.toString();
+    postedBy = _toInt(json['postedBy']);
     createdAt = json['createdAt'];
     updatedAt = json['updatedAt'];
-    applicationCount = json['applicationCount'];
+    applicationCount = _toInt(json['applicationCount']);
   }
 
   Map<String, dynamic> toJson() {
@@ -156,7 +167,7 @@ class JobDetailJob {
   }
 }
 
-class Location {
+class JobDetailLocation {
   int? id;
   int? jobId;
   String? street1;
@@ -164,39 +175,40 @@ class Location {
   String? city;
   String? state;
   String? zipCode;
-  String? latitude;
-  String? longitude;
+  double? latitude;
+  double? longitude;
   String? createdAt;
   String? updatedAt;
   int? distanceKm;
 
-  Location(
-      {this.id,
-        this.jobId,
-        this.street1,
-        this.street2,
-        this.city,
-        this.state,
-        this.zipCode,
-        this.latitude,
-        this.longitude,
-        this.createdAt,
-        this.updatedAt,
-        this.distanceKm});
+  JobDetailLocation({
+    this.id,
+    this.jobId,
+    this.street1,
+    this.street2,
+    this.city,
+    this.state,
+    this.zipCode,
+    this.latitude,
+    this.longitude,
+    this.createdAt,
+    this.updatedAt,
+    this.distanceKm,
+  });
 
-  Location.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    jobId = json['jobId'];
+  JobDetailLocation.fromJson(Map<String, dynamic> json) {
+    id = _toInt(json['id']);
+    jobId = _toInt(json['jobId']);
     street1 = json['street1'];
     street2 = json['street2'];
     city = json['city'];
     state = json['state'];
     zipCode = json['zipCode'];
-    latitude = json['latitude'];
-    longitude = json['longitude'];
+    latitude = _toDouble(json['latitude']);
+    longitude = _toDouble(json['longitude']);
     createdAt = json['createdAt'];
     updatedAt = json['updatedAt'];
-    distanceKm = json['distanceKm'];
+    distanceKm = _toInt(json['distanceKm']);
   }
 
   Map<String, dynamic> toJson() {
@@ -217,7 +229,7 @@ class Location {
   }
 }
 
-class Sessions {
+class JobDetailSessions {
   int? id;
   int? jobId;
   String? startTime;
@@ -227,19 +239,20 @@ class Sessions {
   String? createdAt;
   String? updatedAt;
 
-  Sessions(
-      {this.id,
-        this.jobId,
-        this.startTime,
-        this.endTime,
-        this.startDate,
-        this.endDate,
-        this.createdAt,
-        this.updatedAt});
+  JobDetailSessions({
+    this.id,
+    this.jobId,
+    this.startTime,
+    this.endTime,
+    this.startDate,
+    this.endDate,
+    this.createdAt,
+    this.updatedAt,
+  });
 
-  Sessions.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    jobId = json['jobId'];
+  JobDetailSessions.fromJson(Map<String, dynamic> json) {
+    id = _toInt(json['id']);
+    jobId = _toInt(json['jobId']);
     startTime = json['startTime'];
     endTime = json['endTime'];
     startDate = json['startDate'];
@@ -262,7 +275,7 @@ class Sessions {
   }
 }
 
-class JobServiceCategories {
+class JobDetailServiceCategories {
   int? id;
   int? jobId;
   int? serviceCategoryId;
@@ -270,24 +283,26 @@ class JobServiceCategories {
   ServiceCategory? serviceCategory;
   Service? service;
 
-  JobServiceCategories(
-      {this.id,
-        this.jobId,
-        this.serviceCategoryId,
-        this.serviceId,
-        this.serviceCategory,
-        this.service});
+  JobDetailServiceCategories({
+    this.id,
+    this.jobId,
+    this.serviceCategoryId,
+    this.serviceId,
+    this.serviceCategory,
+    this.service,
+  });
 
-  JobServiceCategories.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    jobId = json['jobId'];
-    serviceCategoryId = json['serviceCategoryId'];
-    serviceId = json['serviceId'];
+  JobDetailServiceCategories.fromJson(Map<String, dynamic> json) {
+    id = _toInt(json['id']);
+    jobId = _toInt(json['jobId']);
+    serviceCategoryId = _toInt(json['serviceCategoryId']);
+    serviceId = _toInt(json['serviceId']);
     serviceCategory = json['serviceCategory'] != null
         ? ServiceCategory.fromJson(json['serviceCategory'])
         : null;
-    service =
-    json['service'] != null ? Service.fromJson(json['service']) : null;
+    service = json['service'] != null
+        ? Service.fromJson(json['service'])
+        : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -314,7 +329,7 @@ class ServiceCategory {
   ServiceCategory({this.id, this.name, this.description});
 
   ServiceCategory.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
+    id = _toInt(json['id']);
     name = json['name'];
     description = json['description'];
   }
@@ -337,10 +352,10 @@ class Service {
   Service({this.id, this.name, this.description, this.serviceCategoryId});
 
   Service.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
+    id = _toInt(json['id']);
     name = json['name'];
     description = json['description'];
-    serviceCategoryId = json['serviceCategoryId'];
+    serviceCategoryId = _toInt(json['serviceCategoryId']);
   }
 
   Map<String, dynamic> toJson() {
@@ -357,25 +372,28 @@ class ServiceDetails {
   String? matchType;
   Service? service;
   ServiceCategory? serviceCategory;
-  List<JobServiceCategories>? jobServiceCategories;
+  List<JobDetailServiceCategories>? jobServiceCategories;
 
-  ServiceDetails(
-      {this.matchType,
-        this.service,
-        this.serviceCategory,
-        this.jobServiceCategories});
+  ServiceDetails({
+    this.matchType,
+    this.service,
+    this.serviceCategory,
+    this.jobServiceCategories,
+  });
 
   ServiceDetails.fromJson(Map<String, dynamic> json) {
     matchType = json['matchType'];
-    service =
-    json['service'] != null ? Service.fromJson(json['service']) : null;
+    service = json['service'] != null
+        ? Service.fromJson(json['service'])
+        : null;
     serviceCategory = json['serviceCategory'] != null
         ? ServiceCategory.fromJson(json['serviceCategory'])
         : null;
+
     if (json['jobServiceCategories'] != null) {
-      jobServiceCategories = <JobServiceCategories>[];
+      jobServiceCategories = <JobDetailServiceCategories>[];
       json['jobServiceCategories'].forEach((v) {
-        jobServiceCategories!.add(JobServiceCategories.fromJson(v));
+        jobServiceCategories!.add(JobDetailServiceCategories.fromJson(v));
       });
     }
   }
@@ -390,8 +408,9 @@ class ServiceDetails {
       data['serviceCategory'] = serviceCategory!.toJson();
     }
     if (jobServiceCategories != null) {
-      data['jobServiceCategories'] =
-          jobServiceCategories!.map((v) => v.toJson()).toList();
+      data['jobServiceCategories'] = jobServiceCategories!
+          .map((v) => v.toJson())
+          .toList();
     }
     return data;
   }
@@ -430,18 +449,19 @@ class User {
   String? authProvider;
   bool? emailVerified;
 
-  User(
-      {this.id,
-        this.firstName,
-        this.lastName,
-        this.email,
-        this.phone,
-        this.profilePicture,
-        this.authProvider,
-        this.emailVerified});
+  User({
+    this.id,
+    this.firstName,
+    this.lastName,
+    this.email,
+    this.phone,
+    this.profilePicture,
+    this.authProvider,
+    this.emailVerified,
+  });
 
   User.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
+    id = _toInt(json['id']);
     firstName = json['firstName'];
     lastName = json['lastName'];
     email = json['email'];
@@ -473,16 +493,17 @@ class About {
   String? degree;
   String? speciality;
 
-  About(
-      {this.yearsOfExperience,
-        this.professionalBio,
-        this.experienceInfo,
-        this.newClientAvailability,
-        this.degree,
-        this.speciality});
+  About({
+    this.yearsOfExperience,
+    this.professionalBio,
+    this.experienceInfo,
+    this.newClientAvailability,
+    this.degree,
+    this.speciality,
+  });
 
   About.fromJson(Map<String, dynamic> json) {
-    yearsOfExperience = json['yearsOfExperience'];
+    yearsOfExperience = _toInt(json['yearsOfExperience']);
     professionalBio = json['professionalBio'];
     experienceInfo = json['experienceInfo'];
     newClientAvailability = json['newClientAvailability'];
@@ -508,26 +529,28 @@ class JobRequirements {
   String? hoursPerDay;
   String? shift;
   int? hourlyRate;
-  List<Sessions>? sessions;
+  List<JobDetailSessions>? sessions;
 
-  JobRequirements(
-      {this.serviceRequirement,
-        this.description,
-        this.hoursPerDay,
-        this.shift,
-        this.hourlyRate,
-        this.sessions});
+  JobRequirements({
+    this.serviceRequirement,
+    this.description,
+    this.hoursPerDay,
+    this.shift,
+    this.hourlyRate,
+    this.sessions,
+  });
 
   JobRequirements.fromJson(Map<String, dynamic> json) {
     serviceRequirement = json['serviceRequirement'];
     description = json['description'];
-    hoursPerDay = json['hoursPerDay'];
+    hoursPerDay = json['hoursPerDay']?.toString();
     shift = json['shift'];
-    hourlyRate = json['hourlyRate'];
+    hourlyRate = _toInt(json['hourlyRate']);
+
     if (json['sessions'] != null) {
-      sessions = <Sessions>[];
+      sessions = <JobDetailSessions>[];
       json['sessions'].forEach((v) {
-        sessions!.add(Sessions.fromJson(v));
+        sessions!.add(JobDetailSessions.fromJson(v));
       });
     }
   }
@@ -544,4 +567,19 @@ class JobRequirements {
     }
     return data;
   }
+}
+
+/// helpers
+int? _toInt(dynamic value) {
+  if (value == null) return null;
+  if (value is int) return value;
+  if (value is double) return value.round();
+  return double.tryParse(value.toString())?.round();
+}
+
+double? _toDouble(dynamic value) {
+  if (value == null) return null;
+  if (value is double) return value;
+  if (value is int) return value.toDouble();
+  return double.tryParse(value.toString());
 }

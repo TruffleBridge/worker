@@ -2,6 +2,7 @@ import 'package:nimora_worker/data/api/jobs/jobs_api.dart';
 import 'package:nimora_worker/domain/model/request/jobs_nearby_request_model.dart';
 import 'package:nimora_worker/domain/model/response/job_applied_response_model.dart';
 import 'package:nimora_worker/domain/model/response/job_detail_response_model.dart';
+import 'package:nimora_worker/domain/model/response/job_tracker_response_model.dart';
 import 'package:nimora_worker/domain/model/response/jobs_nearby_response_model.dart';
 import 'package:nimora_worker/domain/repositories/jobs/jobs_repository.dart';
 
@@ -23,6 +24,21 @@ class JobsRepositoryImpl extends JobsRepository {
   }
 
   @override
+  Future<JobTrackerResponseModel> jobTrackerRequest({
+    required int page,
+    required int limit,
+    int? applicationStatusId,
+    String? search,
+  }) {
+    return jobsApi.jobTrackerRequest(
+      page: page,
+      limit: limit,
+      applicationStatusId: applicationStatusId,
+      search: search,
+    );
+  }
+
+  @override
   Future<JobDetailResponseModel> jobDetailRequest({
     required int jobId,
     required double latitude,
@@ -36,12 +52,8 @@ class JobsRepositoryImpl extends JobsRepository {
   }
 
   @override
-  Future<JobAppliedResponseModel> jobAppliedSubmit({
-    required int jobId,
-  }) {
-    return jobsApi.jobAppliedSubmit(
-      jobId: jobId,
-    );
+  Future<JobAppliedResponseModel> jobAppliedSubmit({required int jobId}) {
+    return jobsApi.jobAppliedSubmit(jobId: jobId);
   }
   @override
   Future<ClientJobsResponseModel> clientJobsListRequest({

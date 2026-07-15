@@ -210,7 +210,7 @@ class _ClientOtpScreenState extends State<ClientOtpScreen> {
                       onPressed: isOtpFilled
                           ? () {
                               // TODO Verify OTP
-                              context.go(AppRoutes.clientHome);
+                              context.go(AppRoutes.clientCreateProfile);
                             }
                           : null,
                       style: ElevatedButton.styleFrom(

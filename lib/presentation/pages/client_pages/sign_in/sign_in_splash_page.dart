@@ -25,9 +25,7 @@ class ClientSignInSplashPage extends StatelessWidget {
       tokenStorage: AppDependencies.tokenStorage,
     );
 
-    final loginRepository = LoginRepositoryImpl(
-      loginApi: loginApi,
-    );
+    final loginRepository = LoginRepositoryImpl(loginApi: loginApi);
 
     return MultiBlocProvider(
       providers: [
@@ -47,10 +45,11 @@ class ClientSignInSplashPage extends StatelessWidget {
         BlocProvider(
           create: (_) => WorkerLoginBloc(
             loginRepository: loginRepository,
+            tokenStorage: AppDependencies.tokenStorage,
           )..add(LoginOnLoadEvent()),
         ),
       ],
-      child: const ClientSignInSplashView()
+      child: const ClientSignInSplashView(),
     );
   }
 }
