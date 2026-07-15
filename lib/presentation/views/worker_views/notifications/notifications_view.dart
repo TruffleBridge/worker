@@ -5,9 +5,7 @@ import 'package:nimora_worker/core/theme/app_theme.dart';
 import 'package:nimora_worker/presentation/widgets/worker_widgets/notifications/notifications_card.dart';
 
 class NotificationsView extends StatelessWidget {
-  const NotificationsView({
-    super.key,
-  });
+  const NotificationsView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -21,23 +19,15 @@ class NotificationsView extends StatelessWidget {
         final errorMessage = state.errorMessage;
 
         if (successMessage != null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                successMessage,
-              ),
-            ),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(successMessage)));
         }
 
         if (errorMessage != null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                errorMessage,
-              ),
-            ),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(errorMessage)));
         }
       },
       builder: (context, state) {
@@ -72,10 +62,7 @@ class NotificationsView extends StatelessWidget {
                   const NotificationRequested(),
                 );
               },
-              child: _buildBody(
-                context,
-                state,
-              ),
+              child: _buildBody(context, state),
             ),
           ),
         );
@@ -83,23 +70,16 @@ class NotificationsView extends StatelessWidget {
     );
   }
 
-  Widget _buildBody(
-      BuildContext context,
-      NotificationState state,
-      ) {
+  Widget _buildBody(BuildContext context, NotificationState state) {
     if (state.isLoading && state.notifications.isEmpty) {
-      return const Center(
-        child: CircularProgressIndicator(),
-      );
+      return const Center(child: CircularProgressIndicator());
     }
 
     if (state.notifications.isEmpty) {
       return ListView(
         physics: const AlwaysScrollableScrollPhysics(),
         children: const [
-          SizedBox(
-            height: 250,
-          ),
+          SizedBox(height: 250),
           Center(
             child: Text(
               'No notifications',
@@ -116,10 +96,7 @@ class NotificationsView extends StatelessWidget {
 
     return ListView(
       physics: const AlwaysScrollableScrollPhysics(),
-      padding: const EdgeInsets.symmetric(
-        horizontal: 16,
-        vertical: 20,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
       children: [
         Text(
           'NEW REQUEST',
@@ -130,50 +107,46 @@ class NotificationsView extends StatelessWidget {
             letterSpacing: 1,
           ),
         ),
-        const SizedBox(
-          height: 12,
-        ),
-        ...state.notifications.map(
-              (notification) {
-            final jobId = notification.id;
+        const SizedBox(height: 12),
+        ...state.notifications.map((notification) {
+          final jobId = notification.id;
+          final clientId = notification.clientId;
 
-            // TODO: Replace with actual logged-in worker ID.
-            const workerId = 2;
+          // TODO: Replace with actual logged-in worker ID.
+          const workerId = 2;
 
-            final isUpdating =
-                state.isUpdating && state.updatingJobId == jobId;
+          final isUpdating = state.isUpdating && state.updatingJobId == jobId;
 
-            return Padding(
-              padding: const EdgeInsets.only(
-                bottom: 12,
-              ),
-              child: NotificationCard(
-                notification: notification,
-                isUpdating: isUpdating,
-                onApprove: jobId == null
-                    ? null
-                    : () {
-                  context.read<NotificationBloc>().add(
-                    NotificationBookingApproved(
-                      jobId: jobId,
-                      workerId: workerId,
-                    ),
-                  );
-                },
-                onDecline: jobId == null
-                    ? null
-                    : () {
-                  context.read<NotificationBloc>().add(
-                    NotificationBookingDeclined(
-                      jobId: jobId,
-                      workerId: workerId,
-                    ),
-                  );
-                },
-              ),
-            );
-          },
-        ),
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 12),
+            child: NotificationCard(
+              notification: notification,
+              isUpdating: isUpdating,
+              onApprove: jobId == null
+                  ? null
+                  : () {
+                      context.read<NotificationBloc>().add(
+                        NotificationBookingApproved(
+                          jobId: jobId,
+                          workerId: workerId,
+                          clientId: clientId ?? 0,
+                        ),
+                      );
+                    },
+              onDecline: jobId == null
+                  ? null
+                  : () {
+                      context.read<NotificationBloc>().add(
+                        NotificationBookingDeclined(
+                          jobId: jobId,
+                          workerId: workerId,
+                          clientId: clientId ?? 0,
+                        ),
+                      );
+                    },
+            ),
+          );
+        }),
       ],
     );
   }
