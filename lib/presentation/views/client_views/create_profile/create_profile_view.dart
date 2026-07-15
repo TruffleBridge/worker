@@ -27,12 +27,14 @@ class _CreateProfileViewState extends State<CreateProfileView> {
   @override
   void initState() {
     super.initState();
+
     _pageController = PageController();
   }
 
   @override
   void dispose() {
     _pageController.dispose();
+
     super.dispose();
   }
 
@@ -49,6 +51,7 @@ class _CreateProfileViewState extends State<CreateProfileView> {
       bloc.add(
         const CreateProfilePreviousStep(),
       );
+
       return;
     }
 
@@ -58,7 +61,13 @@ class _CreateProfileViewState extends State<CreateProfileView> {
   }
 
   void _submit() {
-    context.read<CreateProfileBloc>().add(
+    final bloc = context.read<CreateProfileBloc>();
+
+    if (bloc.state.status == CreateProfileStatus.loading) {
+      return;
+    }
+
+    bloc.add(
       const CreateProfileSubmitted(),
     );
   }
@@ -75,7 +84,9 @@ class _CreateProfileViewState extends State<CreateProfileView> {
             _pageController.page?.round() != state.currentStep) {
           _pageController.animateToPage(
             state.currentStep,
-            duration: const Duration(milliseconds: 280),
+            duration: const Duration(
+              milliseconds: 280,
+            ),
             curve: Curves.easeInOut,
           );
         }
@@ -84,7 +95,9 @@ class _CreateProfileViewState extends State<CreateProfileView> {
             state.errorMessage.isNotEmpty) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(state.errorMessage),
+              content: Text(
+                state.errorMessage,
+              ),
             ),
           );
         }
@@ -93,13 +106,19 @@ class _CreateProfileViewState extends State<CreateProfileView> {
         if (state.completed) {
           return ProfileSuccessScreen(
             onFindWorkers: () {
-              context.go(AppRoutes.clientHome);
+              context.go(
+                AppRoutes.clientHome,
+              );
             },
             onPostJob: () {
-              context.go(AppRoutes.clientJobPost);
+              context.go(
+                AppRoutes.clientJobPost,
+              );
             },
             onGoToDashboard: () {
-              context.go(AppRoutes.clientHome);
+              context.go(
+                AppRoutes.clientHome,
+              );
             },
             onBack: () {
               context.read<CreateProfileBloc>().add(
@@ -110,7 +129,9 @@ class _CreateProfileViewState extends State<CreateProfileView> {
         }
 
         return Scaffold(
-          backgroundColor: const Color(0xFFF1F1F1),
+          backgroundColor: const Color(
+            0xFFF1F1F1,
+          ),
           appBar: CreateProfileAppBar(
             title: _title,
             onBack: _back,
@@ -131,16 +152,23 @@ class _CreateProfileViewState extends State<CreateProfileView> {
                     ),
                     child: Container(
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(7),
+                        borderRadius: BorderRadius.circular(
+                          7,
+                        ),
                         color: Colors.white,
                       ),
                       child: PageView(
                         controller: _pageController,
-                        physics: const NeverScrollableScrollPhysics(),
+                        physics:
+                        const NeverScrollableScrollPhysics(),
                         onPageChanged: (index) {
                           if (state.currentStep != index) {
-                            context.read<CreateProfileBloc>().add(
-                              CreateProfileGoToStep(index),
+                            context
+                                .read<CreateProfileBloc>()
+                                .add(
+                              CreateProfileGoToStep(
+                                index,
+                              ),
                             );
                           }
                         },

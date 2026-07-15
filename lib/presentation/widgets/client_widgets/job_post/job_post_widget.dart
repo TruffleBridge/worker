@@ -170,10 +170,8 @@ class _JobPostWidgetState extends State<JobPostWidget> {
         if (index.isOdd) {
           return const SizedBox(width: 4);
         }
-
         final stepIndex = index ~/ 2;
         final isFilled = stepIndex < _currentStep;
-
         return Expanded(
           child: Container(
             height: 4,

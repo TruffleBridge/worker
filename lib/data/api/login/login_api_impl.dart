@@ -31,12 +31,14 @@ class LoginApiImpl extends LoginApi {
         response.data as Map<String, dynamic>,
       );
 
-      final token =
-          body['token'] ??
-              body['access_token'] ??
-              body['accessToken'];
+      final data = body['data'] as Map<String, dynamic>?;
 
-      if (token != null) {
+      final token =
+          data?['accessToken'] ??
+              data?['access_token'] ??
+              data?['token'];
+
+      if (token != null && token.toString().isNotEmpty) {
         await tokenStorage.saveToken(token.toString());
       }
 

@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:nimora_worker/presentation/pages/client_pages/client_profile/client_profile_page.dart';
 import 'package:nimora_worker/presentation/pages/client_pages/home/client_app_bottom_nav_bar.dart';
 import 'package:nimora_worker/presentation/pages/client_pages/home/client_home_page.dart';
-import 'package:nimora_worker/presentation/pages/job_lisiting/job_listing_page.dart';
-import 'package:nimora_worker/presentation/pages/worker_pages/more/more_page.dart';
-import 'package:nimora_worker/presentation/widgets/client_widgets/more/more_widget.dart';
-import 'package:nimora_worker/presentation/widgets/components/coming_soon_widget.dart';
+import 'package:nimora_worker/presentation/pages/client_pages/job_listing/job_listing_page.dart';
+import 'package:nimora_worker/routes/app_router.dart';
+import 'package:nimora_worker/presentation/pages/client_pages/messages/client_messages_page.dart';
 
-import '../../../../routes/app_router.dart';
 
 class ClientHomeShellPage extends StatefulWidget {
   const ClientHomeShellPage({super.key});
@@ -28,10 +27,10 @@ class _ClientHomeShellPageState extends State<ClientHomeShellPage> {
         return const JobListingPage();
 
       case 2:
-        return const ComingSoonWidget();
+        return const ClientMessagesPage();
 
       case 3:
-        return const MorePage();
+        return const ClientProfilePage();
 
       default:
         return const ClientHomePage();

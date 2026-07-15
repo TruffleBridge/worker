@@ -5,15 +5,22 @@ class CreateProfileState extends Equatable {
   final bool completed;
   final CreateProfileStatus status;
 
-  // Step 1
+  // ---------------------------------------------------------------------------
+  // Step 1 - Personal details
+  // ---------------------------------------------------------------------------
+
   final String fullName;
   final String dateOfBirth;
   final String mobileNumber;
   final String email;
   final String gender;
   final String? idProofFileName;
+  final UploadedFileData? idProof;
 
-  // Step 2
+  // ---------------------------------------------------------------------------
+  // Step 2 - Business details
+  // ---------------------------------------------------------------------------
+
   final String businessName;
   final String abn;
   final String acn;
@@ -22,11 +29,23 @@ class CreateProfileState extends Equatable {
   final String stateValue;
   final String postcode;
 
-  // Step 3
-  final Map<String, bool> mandatoryDocs;
+  // ---------------------------------------------------------------------------
+  // Step 3 - Mandatory documents
+  // ---------------------------------------------------------------------------
 
-  // Step 4
+  final Map<String, bool> mandatoryDocs;
+  final Map<String, UploadedFileData> mandatoryUploadedDocs;
+
+  // ---------------------------------------------------------------------------
+  // Step 4 - Recommended documents
+  // ---------------------------------------------------------------------------
+
   final Map<String, bool> recommendedDocs;
+  final Map<String, UploadedFileData> recommendedUploadedDocs;
+
+  // ---------------------------------------------------------------------------
+  // API
+  // ---------------------------------------------------------------------------
 
   final RegisterResponseModel? response;
   final String errorMessage;
@@ -43,6 +62,7 @@ class CreateProfileState extends Equatable {
     this.email = '',
     this.gender = '',
     this.idProofFileName,
+    this.idProof,
 
     // Step 2
     this.businessName = '',
@@ -65,6 +85,7 @@ class CreateProfileState extends Equatable {
       'Privacy Policy': false,
       'WHS Policy': false,
     },
+    this.mandatoryUploadedDocs = const {},
 
     // Step 4
     this.recommendedDocs = const {
@@ -73,7 +94,9 @@ class CreateProfileState extends Equatable {
       'Infection Control Policy': false,
       'Restrictive Practice Policy': false,
     },
+    this.recommendedUploadedDocs = const {},
 
+    // API
     this.response,
     this.errorMessage = '',
   });
@@ -90,6 +113,8 @@ class CreateProfileState extends Equatable {
     String? email,
     String? gender,
     String? idProofFileName,
+    UploadedFileData? idProof,
+    bool clearIdProofFileName = false,
     bool clearIdProof = false,
 
     // Step 2
@@ -103,12 +128,16 @@ class CreateProfileState extends Equatable {
 
     // Step 3
     Map<String, bool>? mandatoryDocs,
+    Map<String, UploadedFileData>? mandatoryUploadedDocs,
 
     // Step 4
     Map<String, bool>? recommendedDocs,
+    Map<String, UploadedFileData>? recommendedUploadedDocs,
 
+    // API
     RegisterResponseModel? response,
     String? errorMessage,
+    bool clearResponse = false,
   }) {
     return CreateProfileState(
       currentStep: currentStep ?? this.currentStep,
@@ -121,9 +150,12 @@ class CreateProfileState extends Equatable {
       mobileNumber: mobileNumber ?? this.mobileNumber,
       email: email ?? this.email,
       gender: gender ?? this.gender,
-      idProofFileName: clearIdProof
+      idProofFileName: clearIdProofFileName
           ? null
           : idProofFileName ?? this.idProofFileName,
+      idProof: clearIdProof
+          ? null
+          : idProof ?? this.idProof,
 
       // Step 2
       businessName: businessName ?? this.businessName,
@@ -136,11 +168,18 @@ class CreateProfileState extends Equatable {
 
       // Step 3
       mandatoryDocs: mandatoryDocs ?? this.mandatoryDocs,
+      mandatoryUploadedDocs:
+      mandatoryUploadedDocs ?? this.mandatoryUploadedDocs,
 
       // Step 4
       recommendedDocs: recommendedDocs ?? this.recommendedDocs,
+      recommendedUploadedDocs:
+      recommendedUploadedDocs ?? this.recommendedUploadedDocs,
 
-      response: response ?? this.response,
+      // API
+      response: clearResponse
+          ? null
+          : response ?? this.response,
       errorMessage: errorMessage ?? this.errorMessage,
     );
   }
@@ -150,12 +189,17 @@ class CreateProfileState extends Equatable {
     currentStep,
     completed,
     status,
+
+    // Step 1
     fullName,
     dateOfBirth,
     mobileNumber,
     email,
     gender,
     idProofFileName,
+    idProof,
+
+    // Step 2
     businessName,
     abn,
     acn,
@@ -163,8 +207,16 @@ class CreateProfileState extends Equatable {
     suburb,
     stateValue,
     postcode,
+
+    // Step 3
     mandatoryDocs,
+    mandatoryUploadedDocs,
+
+    // Step 4
     recommendedDocs,
+    recommendedUploadedDocs,
+
+    // API
     response,
     errorMessage,
   ];

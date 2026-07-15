@@ -60,8 +60,8 @@ class User {
   IdProof? idProof;
   String? otp;
   String? otpExpiry;
-  String? createdBy;
-  String? updatedBy;
+  int? createdBy;
+  int? updatedBy;
   String? createdAt;
   String? updatedAt;
 

@@ -134,6 +134,7 @@ class _Step2BusinessDetailsState
                 LabeledField(
                   label: 'Active ABN',
                   hint: '11-digit ABN',
+                  maxLength: 11,
                   keyboardType: TextInputType.number,
                   controller: _abnController,
                   onChanged: (value) {
@@ -149,6 +150,7 @@ class _Step2BusinessDetailsState
                 LabeledField(
                   label: 'ACN',
                   hint: '9-digit ACN',
+                  maxLength: 9,
                   keyboardType: TextInputType.number,
                   controller: _acnController,
                   onChanged: (value) {
