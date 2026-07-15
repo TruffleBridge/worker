@@ -3,10 +3,10 @@ import 'package:go_router/go_router.dart';
 import 'package:nimora_worker/presentation/pages/client_pages/client_profile/client_profile_page.dart';
 import 'package:nimora_worker/presentation/pages/client_pages/home/client_app_bottom_nav_bar.dart';
 import 'package:nimora_worker/presentation/pages/client_pages/home/client_home_page.dart';
+import 'package:nimora_worker/presentation/pages/client_pages/job_listing/job_listing_page.dart';
+import 'package:nimora_worker/routes/app_router.dart';
 import 'package:nimora_worker/presentation/pages/client_pages/messages/client_messages_page.dart';
 
-import '../../../../routes/app_router.dart';
-import '../job_lisiting/job_listing_page.dart';
 
 class ClientHomeShellPage extends StatefulWidget {
   const ClientHomeShellPage({super.key});

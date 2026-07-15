@@ -7,7 +7,9 @@ sealed class CreateProfileEvent extends Equatable {
   List<Object?> get props => [];
 }
 
+// ---------------------------------------------------------------------------
 // Step navigation
+// ---------------------------------------------------------------------------
 
 final class CreateProfileNextStep extends CreateProfileEvent {
   const CreateProfileNextStep();
@@ -26,7 +28,9 @@ final class CreateProfileGoToStep extends CreateProfileEvent {
   List<Object?> get props => [step];
 }
 
+// ---------------------------------------------------------------------------
 // Step 1 - Personal details
+// ---------------------------------------------------------------------------
 
 final class CreateProfileFullNameChanged extends CreateProfileEvent {
   final String fullName;
@@ -75,14 +79,20 @@ final class CreateProfileGenderChanged extends CreateProfileEvent {
 
 final class CreateProfileIdProofUpdated extends CreateProfileEvent {
   final String? fileName;
+  final UploadedFileData? uploadedFile;
 
-  const CreateProfileIdProofUpdated(this.fileName);
+  const CreateProfileIdProofUpdated({
+    required this.fileName,
+    required this.uploadedFile,
+  });
 
   @override
-  List<Object?> get props => [fileName];
+  List<Object?> get props => [fileName, uploadedFile];
 }
 
+// ---------------------------------------------------------------------------
 // Step 2 - Business details
+// ---------------------------------------------------------------------------
 
 final class CreateProfileBusinessNameChanged extends CreateProfileEvent {
   final String businessName;
@@ -147,45 +157,46 @@ final class CreateProfilePostcodeChanged extends CreateProfileEvent {
   List<Object?> get props => [postcode];
 }
 
+// ---------------------------------------------------------------------------
 // Step 3 - Mandatory documents
+// ---------------------------------------------------------------------------
 
-final class CreateProfileMandatoryDocumentUpdated
-    extends CreateProfileEvent {
+final class CreateProfileMandatoryDocumentUpdated extends CreateProfileEvent {
   final String documentName;
   final bool uploaded;
+  final UploadedFileData? uploadedFile;
 
   const CreateProfileMandatoryDocumentUpdated({
     required this.documentName,
     required this.uploaded,
+    required this.uploadedFile,
   });
 
   @override
-  List<Object?> get props => [
-    documentName,
-    uploaded,
-  ];
+  List<Object?> get props => [documentName, uploaded, uploadedFile];
 }
 
+// ---------------------------------------------------------------------------
 // Step 4 - Recommended documents
-
-final class CreateProfileRecommendedDocumentUpdated
-    extends CreateProfileEvent {
+// ---------------------------------------------------------------------------
+final class CreateProfileRecommendedDocumentUpdated extends CreateProfileEvent {
   final String documentName;
   final bool uploaded;
+  final UploadedFileData? uploadedFile;
 
   const CreateProfileRecommendedDocumentUpdated({
     required this.documentName,
     required this.uploaded,
+    required this.uploadedFile,
   });
 
   @override
-  List<Object?> get props => [
-    documentName,
-    uploaded,
-  ];
+  List<Object?> get props => [documentName, uploaded, uploadedFile];
 }
 
+// ---------------------------------------------------------------------------
 // Submit
+// ---------------------------------------------------------------------------
 
 final class CreateProfileSubmitted extends CreateProfileEvent {
   const CreateProfileSubmitted();

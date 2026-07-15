@@ -1,4 +1,5 @@
 import 'package:nimora_worker/domain/model/request/jobs_nearby_request_model.dart';
+import 'package:nimora_worker/domain/model/response/booking_status_update_response_model.dart';
 import 'package:nimora_worker/domain/model/response/job_applied_response_model.dart';
 import 'package:nimora_worker/domain/model/response/job_detail_response_model.dart';
 import 'package:nimora_worker/domain/model/response/job_tracker_response_model.dart';
@@ -13,12 +14,13 @@ abstract class JobsRepository {
   Future<JobsNearbyResponseModel> jobsRequest({
     required JobsNearbyRequestModel jobsNearbyRequestModel,
   });
+
   Future<JobTrackerResponseModel> jobTrackerRequest({
     required int page,
     required int limit,
     int? applicationStatusId,
     String? search,
-});
+  });
 
   Future<JobDetailResponseModel> jobDetailRequest({
     required int jobId,
@@ -26,9 +28,7 @@ abstract class JobsRepository {
     required double longitude,
   });
 
-  Future<JobAppliedResponseModel> jobAppliedSubmit({
-    required int jobId,
-  });
+  Future<JobAppliedResponseModel> jobAppliedSubmit({required int jobId});
 
   Future<ClientJobsResponseModel> clientJobsListRequest({
     required ClientJobsRequestModel clientJobsRequestModel,
@@ -36,5 +36,11 @@ abstract class JobsRepository {
 
   Future<ClientJobDetailResponseModel> clientJobDetailRequest({
     required ClientJobDetailRequestModel clientJobDetailRequestModel,
+  });
+
+  Future<BookingStatusUpdateResponseModel> clientBookingStatusUpdate({
+    required int jobId,
+    required int workerId,
+    required String statusType,
   });
 }

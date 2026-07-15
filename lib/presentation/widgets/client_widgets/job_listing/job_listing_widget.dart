@@ -23,7 +23,9 @@ class _JobListingWidgetState extends State<JobListingWidget> {
   void initState() {
     super.initState();
     // Kick off the initial fetch for the default (Active) tab.
-    context.read<MyJobsListBloc>().add(FetchMyJobsListEvent(status: _statusForTab));
+    context.read<MyJobsListBloc>().add(
+      FetchMyJobsListEvent(status: _statusForTab),
+    );
   }
 
   void _switchTab(int index) {
@@ -49,10 +51,7 @@ class _JobListingWidgetState extends State<JobListingWidget> {
                 children: const [
                   Text(
                     "My Jobs",
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                   ),
                 ],
               ),
@@ -61,9 +60,7 @@ class _JobListingWidgetState extends State<JobListingWidget> {
             Container(
               height: 64,
               padding: const EdgeInsets.all(8),
-              decoration: const BoxDecoration(
-                color: Colors.white,
-              ),
+              decoration: const BoxDecoration(color: Colors.white),
               child: Row(
                 children: [
                   Expanded(
@@ -163,7 +160,8 @@ class _JobListingWidgetState extends State<JobListingWidget> {
             Expanded(
               child: BlocBuilder<MyJobsListBloc, MyJobsListState>(
                 builder: (context, state) {
-                  if (state is MyJobsListLoading || state is MyJobsListInitial) {
+                  if (state is MyJobsListLoading ||
+                      state is MyJobsListInitial) {
                     return const Center(child: CircularProgressIndicator());
                   }
 
@@ -181,7 +179,10 @@ class _JobListingWidgetState extends State<JobListingWidget> {
                           ElevatedButton(
                             style: ElevatedButton.styleFrom(
                               minimumSize: const Size(100, 50), // Width, Height
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 8,
+                              ),
                               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                             ),
                             onPressed: () {
@@ -218,53 +219,52 @@ class _JobListingWidgetState extends State<JobListingWidget> {
                       Expanded(
                         child: jobs.isEmpty
                             ? Center(
-                          child: Text(
-                            _selectedTab == 0
-                                ? "No active jobs"
-                                : "No closed jobs",
-                            style:
-                            TextStyle(color: Colors.grey.shade600),
-                          ),
-                        )
+                                child: Text(
+                                  _selectedTab == 0
+                                      ? "No active jobs"
+                                      : "No closed jobs",
+                                  style: TextStyle(color: Colors.grey.shade600),
+                                ),
+                              )
                             : RefreshIndicator(
-                          onRefresh: () async {
-                            context.read<MyJobsListBloc>().add(
-                              RefreshMyJobsListEvent(
-                                status: _statusForTab,
-                              ),
-                            );
-                          },
-                          child: ListView.builder(
-                            key: ValueKey(_selectedTab),
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 20,
-                            ),
-                            itemCount: jobs.length,
-                            itemBuilder: (context, index) {
-                              final job = jobs[index];
-                              return Padding(
-                                padding:
-                                const EdgeInsets.only(bottom: 18),
-                                child: InkWell(
-                                  borderRadius:
-                                  BorderRadius.circular(22),
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (_) =>
-                                         ClientJobDetailPage(
-                                          jobId: job.id!,
-                                        )
+                                onRefresh: () async {
+                                  context.read<MyJobsListBloc>().add(
+                                    RefreshMyJobsListEvent(
+                                      status: _statusForTab,
+                                    ),
+                                  );
+                                },
+                                child: ListView.builder(
+                                  key: ValueKey(_selectedTab),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 20,
+                                  ),
+                                  itemCount: jobs.length,
+                                  itemBuilder: (context, index) {
+                                    final job = jobs[index];
+                                    return Padding(
+                                      padding: const EdgeInsets.only(
+                                        bottom: 18,
+                                      ),
+                                      child: InkWell(
+                                        borderRadius: BorderRadius.circular(22),
+                                        onTap: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (_) =>
+                                                  ClientJobDetailPage(
+                                                    jobId: job.id!,
+                                                  ),
+                                            ),
+                                          );
+                                        },
+                                        child: _jobCard(job),
                                       ),
                                     );
                                   },
-                                  child: _jobCard(job),
                                 ),
-                              );
-                            },
-                          ),
-                        ),
+                              ),
                       ),
                     ],
                   );
@@ -283,23 +283,26 @@ class _JobListingWidgetState extends State<JobListingWidget> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(22),
-        border: Border.all(
-          color: Colors.grey.shade300,
-        ),
+        border: Border.all(color: Colors.grey.shade300),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             "Job #: ${job.id ?? '-'}",
-            style: const TextStyle(color: Colors.grey),
+            style: const TextStyle(
+              color: Color(0xFF706767),
+              fontSize: 12,
+              fontWeight: FontWeight.w400,
+            ),
           ),
           const SizedBox(height: 6),
           Text(
             job.title ?? '-',
             style: const TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
+              fontSize: 16,
+              fontWeight: FontWeight.w700,
+              color: Color(0xFF1C1B1D),
             ),
           ),
           const SizedBox(height: 10),
@@ -307,7 +310,14 @@ class _JobListingWidgetState extends State<JobListingWidget> {
             children: [
               const Icon(Icons.location_on_outlined, size: 18),
               const SizedBox(width: 4),
-              Text(job.location ?? '-'),
+              Text(
+                job.location ?? '-',
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w400,
+                  color: Color(0xFF43474E),
+                ),
+              ),
             ],
           ),
           const SizedBox(height: 6),
@@ -315,7 +325,14 @@ class _JobListingWidgetState extends State<JobListingWidget> {
             children: [
               const Icon(Icons.access_time, size: 18),
               const SizedBox(width: 4),
-              Text(job.postedTime ?? '-'),
+              Text(
+                job.postedTime ?? '-',
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w400,
+                  color: Color(0xFF43474E),
+                ),
+              ),
             ],
           ),
           const SizedBox(height: 16),
@@ -338,8 +355,9 @@ class _JobListingWidgetState extends State<JobListingWidget> {
                     ? "10+ applicants"
                     : "${job.applicantCount ?? 0} applicants",
                 style: const TextStyle(
-                  color: Colors.blue,
-                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF155DFC),
+                  fontWeight: FontWeight.w400,
+                  fontSize: 14,
                 ),
               ),
             ],
@@ -360,12 +378,14 @@ class _JobListingWidgetState extends State<JobListingWidget> {
           child: CircleAvatar(
             radius: 18,
             backgroundColor: Colors.grey.shade300,
-            backgroundImage: shown[i].profilePicture != null &&
-                shown[i].profilePicture!.isNotEmpty
+            backgroundImage:
+                shown[i].profilePicture != null &&
+                    shown[i].profilePicture!.isNotEmpty
                 ? NetworkImage(shown[i].profilePicture!)
                 : null,
-            child: shown[i].profilePicture == null ||
-                shown[i].profilePicture!.isEmpty
+            child:
+                shown[i].profilePicture == null ||
+                    shown[i].profilePicture!.isEmpty
                 ? const Icon(Icons.person, size: 18)
                 : null,
           ),
@@ -403,20 +423,14 @@ class _Tag extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 12,
-        vertical: 6,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
         color: bg,
         borderRadius: BorderRadius.circular(30),
       ),
       child: Text(
         text,
-        style: TextStyle(
-          color: color,
-          fontWeight: FontWeight.w500,
-        ),
+        style: TextStyle(color: color, fontWeight: FontWeight.w500),
       ),
     );
   }

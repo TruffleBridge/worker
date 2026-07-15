@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:nimora_worker/data/api/jobs/jobs_api.dart';
 import 'package:nimora_worker/domain/model/request/jobs_nearby_request_model.dart';
+import 'package:nimora_worker/domain/model/response/booking_status_update_response_model.dart';
 import 'package:nimora_worker/domain/model/response/job_applied_response_model.dart';
 import 'package:nimora_worker/domain/model/response/job_detail_response_model.dart';
 import 'package:nimora_worker/domain/model/response/job_tracker_response_model.dart';
@@ -95,6 +96,7 @@ class JobsApiImpl extends JobsApi {
       throw Exception(e.response?.data?['message'] ?? 'Failed to load jobs');
     }
   }
+
   @override
   Future<ClientJobsResponseModel> clientJobsListRequest({
     required ClientJobsRequestModel clientJobsRequestModel,
@@ -114,6 +116,7 @@ class JobsApiImpl extends JobsApi {
       );
     }
   }
+
   @override
   Future<ClientJobDetailResponseModel> clientJobDetailRequest({
     required ClientJobDetailRequestModel clientJobDetailRequestModel,
@@ -129,11 +132,31 @@ class JobsApiImpl extends JobsApi {
       );
     } on DioException catch (e) {
       throw Exception(
+        e.response?.data?['message'] ?? 'Failed to load job detail',
+      );
+    }
+  }
+
+  @override
+  Future<BookingStatusUpdateResponseModel> clientBookingStatusUpdate({
+    required int jobId,
+    required int workerId,
+    required String statusType,
+  }) async {
+    try {
+      final response = await dio.post(
+        '/api/booking/bookingStatusUpdate',
+        data: {"jobId": jobId, "workerId": workerId, "status": statusType},
+      );
+
+      return BookingStatusUpdateResponseModel.fromJson(
+        response.data as Map<String, dynamic>,
+      );
+    } on DioException catch (e) {
+      throw Exception(
         e.response?.data?['message'] ??
-            'Failed to load job detail',
+            'Failed to Update Booking Booking Status',
       );
     }
   }
 }
-
-

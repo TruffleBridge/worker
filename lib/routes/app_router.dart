@@ -10,6 +10,7 @@ import 'package:nimora_worker/presentation/pages/worker_pages/ai_assistant/AiAss
 import 'package:nimora_worker/presentation/pages/worker_pages/home/home_shell.dart';
 import 'package:nimora_worker/presentation/pages/worker_pages/location/location_screen.dart';
 import 'package:nimora_worker/presentation/pages/worker_pages/login/login_page.dart';
+import 'package:nimora_worker/presentation/pages/worker_pages/notifications/notifications_page.dart';
 import 'package:nimora_worker/presentation/pages/worker_pages/onboarding/choose_roles_page.dart';
 import 'package:nimora_worker/presentation/pages/worker_pages/onboarding/onboarding_page.dart';
 import 'package:nimora_worker/presentation/pages/worker_pages/sign_in_splash/sign_in_splash_page.dart';
@@ -32,6 +33,7 @@ abstract class AppRoutes {
   static const String splash = '/splash';
   static const String onboarding = '/onboarding';
   static const String chooseRole = '/choose-role';
+  static const String workerNotifications = '/notifications';
 
   //Worker
   static const String signInSplash = '/worker-sign-in-splash';
@@ -81,6 +83,15 @@ final GoRouter appRouter = GoRouter(
       pageBuilder: (context, state) => CustomTransitionPage(
         key: state.pageKey,
         child: const SplashPage(),
+        transitionsBuilder: _fadeTransition,
+      ),
+    ),
+    GoRoute(
+      path: AppRoutes.workerNotifications,
+      name: 'notifications',
+      pageBuilder: (context, state) => CustomTransitionPage(
+        key: state.pageKey,
+        child: const WorkerNotificationsPage(),
         transitionsBuilder: _fadeTransition,
       ),
     ),
