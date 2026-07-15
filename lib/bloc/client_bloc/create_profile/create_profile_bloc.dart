@@ -1,8 +1,10 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nimora_worker/core/enums/create_profile_status.dart';
-import 'package:nimora_worker/domain/model/request/register_request_model.dart';
+import 'package:nimora_worker/domain/model/request/register_request_model.dart'
+as register_request;
 import 'package:nimora_worker/domain/model/response/register_response_model.dart';
+import 'package:nimora_worker/domain/model/response/upload_response_model.dart';
 import 'package:nimora_worker/domain/repositories/create_profile/create_profile_repository.dart';
 
 part 'create_profile_event.dart';
@@ -17,6 +19,7 @@ class CreateProfileBloc
   CreateProfileBloc({
     required this.createProfileRepository,
   }) : super(const CreateProfileState()) {
+    // Navigation
     on<CreateProfileNextStep>(_onNextStep);
     on<CreateProfilePreviousStep>(_onPreviousStep);
     on<CreateProfileGoToStep>(_onGoToStep);
@@ -30,7 +33,9 @@ class CreateProfileBloc
     on<CreateProfileIdProofUpdated>(_onIdProofUpdated);
 
     // Step 2
-    on<CreateProfileBusinessNameChanged>(_onBusinessNameChanged);
+    on<CreateProfileBusinessNameChanged>(
+      _onBusinessNameChanged,
+    );
     on<CreateProfileAbnChanged>(_onAbnChanged);
     on<CreateProfileAcnChanged>(_onAcnChanged);
     on<CreateProfileAddressChanged>(_onAddressChanged);
@@ -48,8 +53,13 @@ class CreateProfileBloc
       _onRecommendedDocumentUpdated,
     );
 
+    // Submit
     on<CreateProfileSubmitted>(_onSubmitted);
-    on<CreateProfileCompletionReset>(_onCompletionReset);
+
+    // Reset
+    on<CreateProfileCompletionReset>(
+      _onCompletionReset,
+    );
   }
 
   // ---------------------------------------------------------------------------
@@ -90,7 +100,8 @@ class CreateProfileBloc
       CreateProfileGoToStep event,
       Emitter<CreateProfileState> emit,
       ) {
-    if (event.step < 0 || event.step >= _totalSteps) {
+    if (event.step < 0 ||
+        event.step >= _totalSteps) {
       return;
     }
 
@@ -167,7 +178,11 @@ class CreateProfileBloc
     emit(
       state.copyWith(
         idProofFileName: event.fileName,
-        clearIdProof: event.fileName == null,
+        idProof: event.uploadedFile,
+        clearIdProofFileName:
+        event.fileName == null,
+        clearIdProof:
+        event.uploadedFile == null,
       ),
     );
   }
@@ -261,15 +276,34 @@ class CreateProfileBloc
       CreateProfileMandatoryDocumentUpdated event,
       Emitter<CreateProfileState> emit,
       ) {
-    final mandatoryDocs = Map<String, bool>.from(
+    final mandatoryDocs =
+    Map<String, bool>.from(
       state.mandatoryDocs,
     );
 
-    mandatoryDocs[event.documentName] = event.uploaded;
+    final mandatoryUploadedDocs =
+    Map<String, UploadedFileData>.from(
+      state.mandatoryUploadedDocs,
+    );
+
+    mandatoryDocs[event.documentName] =
+        event.uploaded;
+
+    if (event.uploaded &&
+        event.uploadedFile != null) {
+      mandatoryUploadedDocs[event.documentName] =
+      event.uploadedFile!;
+    } else {
+      mandatoryUploadedDocs.remove(
+        event.documentName,
+      );
+    }
 
     emit(
       state.copyWith(
         mandatoryDocs: mandatoryDocs,
+        mandatoryUploadedDocs:
+        mandatoryUploadedDocs,
       ),
     );
   }
@@ -282,15 +316,34 @@ class CreateProfileBloc
       CreateProfileRecommendedDocumentUpdated event,
       Emitter<CreateProfileState> emit,
       ) {
-    final recommendedDocs = Map<String, bool>.from(
+    final recommendedDocs =
+    Map<String, bool>.from(
       state.recommendedDocs,
     );
 
-    recommendedDocs[event.documentName] = event.uploaded;
+    final recommendedUploadedDocs =
+    Map<String, UploadedFileData>.from(
+      state.recommendedUploadedDocs,
+    );
+
+    recommendedDocs[event.documentName] =
+        event.uploaded;
+
+    if (event.uploaded &&
+        event.uploadedFile != null) {
+      recommendedUploadedDocs[event.documentName] =
+      event.uploadedFile!;
+    } else {
+      recommendedUploadedDocs.remove(
+        event.documentName,
+      );
+    }
 
     emit(
       state.copyWith(
         recommendedDocs: recommendedDocs,
+        recommendedUploadedDocs:
+        recommendedUploadedDocs,
       ),
     );
   }
@@ -303,6 +356,11 @@ class CreateProfileBloc
       CreateProfileSubmitted event,
       Emitter<CreateProfileState> emit,
       ) async {
+    if (state.status ==
+        CreateProfileStatus.loading) {
+      return;
+    }
+
     emit(
       state.copyWith(
         status: CreateProfileStatus.loading,
@@ -313,8 +371,12 @@ class CreateProfileBloc
     try {
       final nameParts = state.fullName
           .trim()
-          .split(RegExp(r'\s+'))
-          .where((value) => value.isNotEmpty)
+          .split(
+        RegExp(r'\s+'),
+      )
+          .where(
+            (value) => value.isNotEmpty,
+      )
           .toList();
 
       final firstName = nameParts.isNotEmpty
@@ -325,16 +387,40 @@ class CreateProfileBloc
           ? nameParts.sublist(1).join(' ')
           : '';
 
-      final request = RegisterRequestModel(
+      final uploadedDocuments =
+      <register_request.Documents>[
+        ...state.mandatoryUploadedDocs.entries.map(
+              (entry) => _mapUploadedDocument(
+            documentName: entry.key,
+            uploadedFile: entry.value,
+          ),
+        ),
+        ...state.recommendedUploadedDocs.entries.map(
+              (entry) => _mapUploadedDocument(
+            documentName: entry.key,
+            uploadedFile: entry.value,
+          ),
+        ),
+      ];
+
+      final request =
+      register_request.RegisterRequestModel(
         firstName: firstName,
         lastName: lastName,
         email: state.email.trim(),
+        password: 'Test@123',
         phoneNumber: state.mobileNumber.trim(),
+        countryCode: '+61',
         type: 'client',
         dateOfBirth: state.dateOfBirth,
         gender: state.gender.toUpperCase(),
-        businessInfo: BusinessInfo(
-          businessName: state.businessName.trim(),
+        idProof: _mapIdProof(
+          state.idProof,
+        ),
+        businessInfo:
+        register_request.BusinessInfo(
+          businessName:
+          state.businessName.trim(),
           activeABN: state.abn.trim(),
           acn: state.acn.trim(),
           street1: state.address.trim(),
@@ -342,9 +428,12 @@ class CreateProfileBloc
           state: state.stateValue,
           zipcode: state.postcode.trim(),
         ),
+        documents: uploadedDocuments,
       );
 
-      final response = await createProfileRepository.registerRequest(
+      final response =
+      await createProfileRepository
+          .registerRequest(
         registerRequestModel: request,
       );
 
@@ -365,7 +454,8 @@ class CreateProfileBloc
         state.copyWith(
           status: CreateProfileStatus.failure,
           errorMessage:
-          response.message ?? 'Failed to create profile',
+          response.message ??
+              'Failed to create profile',
         ),
       );
     } catch (e) {
@@ -374,14 +464,117 @@ class CreateProfileBloc
           status: CreateProfileStatus.failure,
           errorMessage: e
               .toString()
-              .replaceFirst('Exception: ', ''),
+              .replaceFirst(
+            'Exception: ',
+            '',
+          ),
         ),
       );
     }
   }
 
   // ---------------------------------------------------------------------------
-  // Reset completion
+  // Upload mapping
+  // ---------------------------------------------------------------------------
+
+  register_request.IdProof? _mapIdProof(
+      UploadedFileData? uploadedFile,
+      ) {
+    if (uploadedFile == null) {
+      return null;
+    }
+
+    return register_request.IdProof(
+      name: uploadedFile.name,
+      url: uploadedFile.url,
+      size: uploadedFile.size,
+      type: _getMimeType(
+        uploadedFile.fileType,
+      ),
+      createdAt: uploadedFile.createdAt,
+    );
+  }
+
+  register_request.Documents _mapUploadedDocument({
+    required String documentName,
+    required UploadedFileData uploadedFile,
+  }) {
+    final documentTypeId =
+    _getDocumentTypeId(documentName);
+
+    if (documentTypeId == null) {
+      throw Exception(
+        'Document type ID not found for $documentName',
+      );
+    }
+
+    return register_request.Documents(
+      documentType: documentName,
+      documentTypeId: documentTypeId,
+      documentUrls: [
+        register_request.DocumentUrls(
+          name: uploadedFile.name,
+          url: uploadedFile.url,
+          size: uploadedFile.size,
+          type: _getMimeType(
+            uploadedFile.fileType,
+          ),
+          createdAt: uploadedFile.createdAt,
+        ),
+      ],
+    );
+  }
+
+  String _getMimeType(
+      String? fileType,
+      ) {
+    switch (fileType?.toLowerCase()) {
+      case 'jpg':
+      case 'jpeg':
+        return 'image/jpeg';
+
+      case 'png':
+        return 'image/png';
+
+      case 'pdf':
+        return 'application/pdf';
+
+      case 'doc':
+        return 'application/msword';
+
+      case 'docx':
+        return 'application/vnd.openxmlformats-officedocument'
+            '.wordprocessingml.document';
+
+      default:
+        return fileType ?? '';
+    }
+  }
+
+  int? _getDocumentTypeId(
+      String documentName,
+      ) {
+    const documentTypeIds = <String, int>{
+      'NDIS Certificate of Registration': 1,
+      'NDIS Audit Certificate': 2,
+      'Public Liability Insurance': 3,
+      'Professional Indemnity Insurance': 4,
+      'Workers Compensation Insurance': 5,
+      'Incident Management Policy': 6,
+      'Complaints Management Policy': 7,
+      'Privacy Policy': 8,
+      'WHS Policy': 9,
+      'Annual Compliance Declaration': 10,
+      'Risk Management Policy': 11,
+      'Infection Control Policy': 12,
+      'Restrictive Practice Policy': 13,
+    };
+
+    return documentTypeIds[documentName];
+  }
+
+  // ---------------------------------------------------------------------------
+  // Reset
   // ---------------------------------------------------------------------------
 
   void _onCompletionReset(
@@ -389,11 +582,7 @@ class CreateProfileBloc
       Emitter<CreateProfileState> emit,
       ) {
     emit(
-      state.copyWith(
-        completed: false,
-        status: CreateProfileStatus.initial,
-        errorMessage: '',
-      ),
+      const CreateProfileState(),
     );
   }
 }

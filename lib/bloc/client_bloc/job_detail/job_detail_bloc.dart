@@ -13,7 +13,12 @@ class ClientJobDetailBloc
     required this.jobsRepository,
   }) : super(ClientJobDetailInitial()) {
     on<FetchClientJobDetailEvent>(_onFetchJobDetail);
+    on<ClientBookingStatusUpdateEvent>(_onBookingStatusUpdate);
   }
+
+  // ---------------------------------------------------------------------------
+  // Fetch client job detail
+  // ---------------------------------------------------------------------------
 
   Future<void> _onFetchJobDetail(
       FetchClientJobDetailEvent event,
@@ -38,7 +43,74 @@ class ClientJobDetailBloc
     } catch (e) {
       emit(
         ClientJobDetailError(
-          message: e.toString().replaceFirst("Exception: ", ""),
+          message: e.toString().replaceFirst(
+            'Exception: ',
+            '',
+          ),
+        ),
+      );
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // Update booking status
+  // ---------------------------------------------------------------------------
+
+  Future<void> _onBookingStatusUpdate(
+      ClientBookingStatusUpdateEvent event,
+      Emitter<ClientJobDetailState> emit,
+      ) async {
+    final currentState = state;
+
+    if (currentState is! ClientJobDetailLoaded) {
+      return;
+    }
+
+    emit(
+      ClientBookingStatusUpdating(
+        response: currentState.response,
+        workerId: event.workerId,
+      ),
+    );
+
+    try {
+      final response = await jobsRepository.clientBookingStatusUpdate(
+        jobId: event.jobId,
+        workerId: event.workerId,
+        statusType: event.statusType,
+      );
+
+      if (response.status == true) {
+        emit(
+          ClientBookingStatusUpdateSuccess(
+            response: currentState.response,
+            message: response.message ?? 'Booking status updated successfully',
+          ),
+        );
+
+        add(
+          FetchClientJobDetailEvent(
+            jobId: event.jobId,
+          ),
+        );
+
+        return;
+      }
+
+      emit(
+        ClientBookingStatusUpdateFailure(
+          response: currentState.response,
+          message: response.message ?? 'Failed to update booking status',
+        ),
+      );
+    } catch (e) {
+      emit(
+        ClientBookingStatusUpdateFailure(
+          response: currentState.response,
+          message: e.toString().replaceFirst(
+            'Exception: ',
+            '',
+          ),
         ),
       );
     }

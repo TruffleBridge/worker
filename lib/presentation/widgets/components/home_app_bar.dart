@@ -147,7 +147,9 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                     Icons.notifications_none_rounded,
                     color: AppColors.textPrimary,
                   ),
-                  onPressed: () {},
+                  onPressed: () {
+                    context.push(AppRoutes.workerNotifications);
+                  },
                 ),
               ),
 

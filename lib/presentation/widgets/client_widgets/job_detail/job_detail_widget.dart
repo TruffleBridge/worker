@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import '../../../../bloc/client_bloc/job_detail/job_detail_bloc.dart';
-import '../../../../bloc/client_bloc/job_detail/job_detail_state.dart';
-import '../../../../domain/model/response/job_detail/job_detail_response_model.dart';
+import 'package:nimora_worker/bloc/client_bloc/job_detail/job_detail_bloc.dart';
+import 'package:nimora_worker/bloc/client_bloc/job_detail/job_detail_event.dart';
+import 'package:nimora_worker/bloc/client_bloc/job_detail/job_detail_state.dart';
+import 'package:nimora_worker/domain/model/response/job_detail/job_detail_response_model.dart';
 
 class JobDetailWidget extends StatefulWidget {
   const JobDetailWidget({super.key});
@@ -13,34 +14,61 @@ class JobDetailWidget extends StatefulWidget {
 }
 
 class _JobDetailWidgetState extends State<JobDetailWidget> {
-  static const _bg = Color(0xFFF9FAFB);
-  static const _secondary = Color(0xFF6B7280);
-  static const _border = Color(0xFFE5E7EB);
-  static const _linkBlue = Color(0xFF3B82F6);
-  static const _priceGreen = Color(0xFF10B981);
-  static const _editGreen = Color(0xFF336B5F);
-  static const _closeRed = Color(0xFFD14343);
-  static const _sessionAccent = Color(0xFF2563EB);
+  static const Color _bg = Color(0xFFF9FAFB);
+  static const Color _secondary = Color(0xFF706767);
+  static const Color _border = Color(0xFFE5E7EB);
+  static const Color _linkBlue = Color(0xFF3B82F6);
+  static const Color _priceGreen = Color(0xFF00A63E);
+  static const Color _editGreen = Color(0xFF336B5F);
+  static const Color _closeRed = Color(0xFFD14343);
+  static const Color _sessionAccent = Color(0xFF2650FC);
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ClientJobDetailBloc, ClientJobDetailState>(
+    return BlocConsumer<ClientJobDetailBloc, ClientJobDetailState>(
+      listener: (context, state) {
+        if (state is ClientBookingStatusUpdateSuccess) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(state.message)));
+        }
+
+        if (state is ClientBookingStatusUpdateFailure) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(state.message)));
+        }
+      },
       builder: (context, state) {
         if (state is ClientJobDetailLoading) {
           return const Scaffold(
+            backgroundColor: _bg,
             body: Center(child: CircularProgressIndicator()),
           );
         }
 
         if (state is ClientJobDetailError) {
-          return Scaffold(body: Center(child: Text(state.message)));
+          return Scaffold(
+            backgroundColor: _bg,
+            body: Center(child: Text(state.message)),
+          );
         }
 
-        if (state is! ClientJobDetailLoaded) {
-          return const Scaffold(body: SizedBox());
+        ClientJobDetailResponseModel? response;
+
+        if (state is ClientJobDetailLoaded) {
+          response = state.response;
+        } else if (state is ClientBookingStatusUpdating) {
+          response = state.response;
+        } else if (state is ClientBookingStatusUpdateSuccess) {
+          response = state.response;
+        } else if (state is ClientBookingStatusUpdateFailure) {
+          response = state.response;
         }
 
-        final response = state.response;
+        if (response == null) {
+          return const Scaffold(backgroundColor: _bg, body: SizedBox());
+        }
 
         final applicants =
             response.data?.applicants?.items ?? <ApplicantModel>[];
@@ -57,8 +85,9 @@ class _JobDetailWidgetState extends State<JobDetailWidget> {
 
         final applicantCount = applicants.length;
 
-        final applicantCountText =
-        applicantCount > 10 ? "10+ applicants" : "$applicantCount applicants";
+        final applicantCountText = applicantCount > 10
+            ? '10+ applicants'
+            : '$applicantCount applicants';
 
         return Scaffold(
           backgroundColor: _bg,
@@ -79,52 +108,45 @@ class _JobDetailWidgetState extends State<JobDetailWidget> {
                         ),
                         child: IconButton(
                           icon: const Icon(Icons.arrow_back_ios_new, size: 18),
-                          onPressed: () => Navigator.pop(context),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
                         ),
                       ),
-
                       const SizedBox(width: 16),
-
                       const Text(
-                        "Job Details",
+                        'Job Details',
                         style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.w700,
+                          fontSize: 20,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFF101828),
                         ),
                       ),
                     ],
                   ),
-
                   const SizedBox(height: 24),
-
                   Text(
-                    "Job #: ${job?.id ?? ""}",
-                    style: const TextStyle(fontSize: 13, color: _secondary),
+                    'Job #: ${job?.id ?? ''}',
+                    style: const TextStyle(fontSize: 18, color: _secondary),
                   ),
-
                   const SizedBox(height: 6),
-
                   Text(
-                    job?.title ?? "",
+                    job?.title ?? '',
                     style: const TextStyle(
-                      fontSize: 24,
+                      fontSize: 18,
                       fontWeight: FontWeight.w700,
+                      color: Color(0xFF1C1B1D),
                     ),
                   ),
-
                   const SizedBox(height: 10),
-
                   _meta(
                     Icons.location_on_outlined,
-                    "${location?.street1 ?? ""}, ${location?.city ?? ""}",
+                    '${location?.street1 ?? ''}, '
+                    '${location?.city ?? ''}',
                   ),
-
                   const SizedBox(height: 6),
-
-                  _meta(Icons.access_time, job?.postedTime ?? ""),
-
+                  _meta(Icons.access_time, job?.postedTime ?? ''),
                   const SizedBox(height: 14),
-
                   Wrap(
                     spacing: 8,
                     runSpacing: 8,
@@ -133,7 +155,7 @@ class _JobDetailWidgetState extends State<JobDetailWidget> {
                               .map(
                                 (tag) => _tag(
                                   tag,
-                                  const Color(0xffF2F2F2),
+                                  const Color(0xFFF2F2F2),
                                   Colors.black,
                                 ),
                               )
@@ -141,45 +163,34 @@ class _JobDetailWidgetState extends State<JobDetailWidget> {
                           [],
                     ],
                   ),
-
                   const SizedBox(height: 18),
-
                   Row(
                     children: [
                       CircleAvatar(
                         radius: 22,
                         backgroundColor: Colors.grey.shade300,
-                        backgroundImage: (firstApplicant?.profilePicture != null &&
-                            firstApplicant!.profilePicture!.isNotEmpty)
+                        backgroundImage:
+                            firstApplicant?.profilePicture != null &&
+                                firstApplicant!.profilePicture!.isNotEmpty
                             ? NetworkImage(firstApplicant.profilePicture!)
                             : null,
                         child: firstApplicant == null
                             ? const Icon(
-                          Icons.person,
-                          color: Colors.grey,
-                          size: 20,
-                        )
-                            : (firstApplicant.profilePicture == null ||
-                            firstApplicant.profilePicture!.isEmpty)
+                                Icons.person,
+                                color: Colors.grey,
+                                size: 20,
+                              )
+                            : firstApplicant.profilePicture == null ||
+                                  firstApplicant.profilePicture!.isEmpty
                             ? Text(
-                          (firstApplicant.fullName?.isNotEmpty ?? false)
-                              ? firstApplicant.fullName!
-                              .trim()
-                              .split(' ')
-                              .map((e) => e[0])
-                              .take(2)
-                              .join()
-                              .toUpperCase()
-                              : "",
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        )
+                                _getInitials(firstApplicant.fullName),
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              )
                             : null,
                       ),
-
                       const SizedBox(width: 10),
-
                       Expanded(
                         child: Text(
                           applicantCountText,
@@ -189,20 +200,17 @@ class _JobDetailWidgetState extends State<JobDetailWidget> {
                           ),
                         ),
                       ),
-
                       Text(
-                        "₹${job?.hourlyRate ?? ""}/hr",
+                        '₹${job?.hourlyRate ?? ''}/hr',
                         style: const TextStyle(
                           color: _priceGreen,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 16,
                         ),
                       ),
                     ],
                   ),
-
                   const SizedBox(height: 20),
-
                   _card(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -210,31 +218,33 @@ class _JobDetailWidgetState extends State<JobDetailWidget> {
                         Row(
                           children: [
                             const Text(
-                              "Sessions",
+                              'Sessions',
                               style: TextStyle(
-                                fontWeight: FontWeight.bold,
+                                fontWeight: FontWeight.w600,
                                 fontSize: 16,
+                                color: Color(0xFF101828),
                               ),
                             ),
-
                             const Spacer(),
-
                             Text(
-                              "${sessions.length} Sessions",
-                              style: const TextStyle(color: _secondary),
+                              '${sessions.length} Sessions',
+                              style: const TextStyle(
+                                color: Color(0xFF6A7282),
+                                fontWeight: FontWeight.w500,
+                                fontSize: 14,
+                              ),
                             ),
                           ],
                         ),
-
                         const SizedBox(height: 15),
-
                         Column(
                           children: sessions.map((session) {
                             return Padding(
                               padding: const EdgeInsets.only(bottom: 12),
                               child: _session(
-                                session.startDate ?? "",
-                                "${session.startTime ?? ""} - ${session.endTime ?? ""}",
+                                session.startDate ?? '',
+                                '${session.startTime ?? ''} - '
+                                '${session.endTime ?? ''}',
                               ),
                             );
                           }).toList(),
@@ -242,23 +252,20 @@ class _JobDetailWidgetState extends State<JobDetailWidget> {
                       ],
                     ),
                   ),
-
                   const SizedBox(height: 20),
-
                   _card(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Text(
-                          "Service Requirements",
+                          'Service Requirements',
                           style: TextStyle(
-                            fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.w600,
                             fontSize: 16,
+                            color: Color(0xFF101828),
                           ),
                         ),
-
                         const SizedBox(height: 16),
-
                         if (serviceRequirements.isNotEmpty)
                           ...serviceRequirements.map(
                             (requirement) => Padding(
@@ -275,7 +282,11 @@ class _JobDetailWidgetState extends State<JobDetailWidget> {
                                   Expanded(
                                     child: Text(
                                       requirement,
-                                      style: const TextStyle(height: 1.5),
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w400,
+                                        color: Color(0xFF364153),
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -284,35 +295,32 @@ class _JobDetailWidgetState extends State<JobDetailWidget> {
                           )
                         else
                           const Text(
-                            "No service requirements available",
+                            'No service requirements available',
                             style: TextStyle(color: Colors.grey),
                           ),
                       ],
                     ),
                   ),
-
                   const SizedBox(height: 20),
-
                   _card(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "Total Applicants - ${applicants.length}",
+                          'Total Applicants - ${applicants.length}',
                           style: const TextStyle(
-                            fontWeight: FontWeight.w700,
+                            fontWeight: FontWeight.w600,
                             fontSize: 16,
+                            color: Color(0xFF101828),
                           ),
                         ),
-
                         const SizedBox(height: 16),
-
                         if (applicants.isEmpty)
                           const Center(
                             child: Padding(
                               padding: EdgeInsets.symmetric(vertical: 20),
                               child: Text(
-                                "No applicants yet",
+                                'No applicants yet',
                                 style: TextStyle(
                                   color: Colors.grey,
                                   fontSize: 15,
@@ -328,6 +336,12 @@ class _JobDetailWidgetState extends State<JobDetailWidget> {
                             itemBuilder: (context, index) {
                               final applicant = applicants[index];
 
+                              final workerId = applicant.userId;
+
+                              final isBooking =
+                                  state is ClientBookingStatusUpdating &&
+                                  state.workerId == workerId;
+
                               return Padding(
                                 padding: const EdgeInsets.only(bottom: 12),
                                 child: Container(
@@ -342,42 +356,32 @@ class _JobDetailWidgetState extends State<JobDetailWidget> {
                                         radius: 28,
                                         backgroundColor: Colors.grey.shade300,
                                         backgroundImage:
-                                            (applicant.profilePicture != null &&
+                                            applicant.profilePicture != null &&
                                                 applicant
                                                     .profilePicture!
-                                                    .isNotEmpty)
+                                                    .isNotEmpty
                                             ? NetworkImage(
                                                 applicant.profilePicture!,
                                               )
                                             : null,
                                         child:
-                                            (applicant.profilePicture == null ||
+                                            applicant.profilePicture == null ||
                                                 applicant
                                                     .profilePicture!
-                                                    .isEmpty)
+                                                    .isEmpty
                                             ? Text(
-                                                (applicant
-                                                            .fullName
-                                                            ?.isNotEmpty ??
-                                                        false)
-                                                    ? applicant.fullName!
-                                                          .trim()
-                                                          .split(' ')
-                                                          .map((e) => e[0])
-                                                          .take(2)
-                                                          .join()
-                                                          .toUpperCase()
-                                                    : "",
+                                                _getInitials(
+                                                  applicant.fullName,
+                                                ),
                                                 style: const TextStyle(
-                                                  fontWeight: FontWeight.bold,
+                                                  fontWeight: FontWeight.w600,
                                                   fontSize: 16,
+                                                  color: Color(0xFF000000),
                                                 ),
                                               )
                                             : null,
                                       ),
-
                                       const SizedBox(width: 12),
-
                                       Expanded(
                                         child: Column(
                                           crossAxisAlignment:
@@ -385,53 +389,102 @@ class _JobDetailWidgetState extends State<JobDetailWidget> {
                                           children: [
                                             Text(
                                               applicant.fullName ??
-                                                  "Unknown Applicant",
+                                                  'Unknown Applicant',
                                               style: const TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 15,
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: 16,
+                                                color: Color(0xFF000000),
                                               ),
                                             ),
-
                                             const SizedBox(height: 4),
-
                                             Text(
                                               applicant
                                                       .applicationStatus
                                                       ?.name ??
-                                                  "Application Submitted",
+                                                  'Application Submitted',
                                               style: const TextStyle(
-                                                color: _secondary,
-                                                fontSize: 13,
+                                                color: Color(0xFF43474E),
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.w400,
                                               ),
                                             ),
                                           ],
                                         ),
                                       ),
+                                      InkWell(
+                                        onTap: isBooking
+                                            ? null
+                                            : () {
+                                                final jobId = job?.id;
 
-                                      IconButton(
-                                        onPressed: () {
-                                          // TODO: Chat
-                                        },
-                                        icon: const Icon(
-                                          Icons.chat_bubble_outline,
-                                          color: _secondary,
+                                                if (jobId == null ||
+                                                    workerId == null) {
+                                                  ScaffoldMessenger.of(
+                                                    context,
+                                                  ).showSnackBar(
+                                                    const SnackBar(
+                                                      content: Text(
+                                                        'Job ID or Worker ID not found',
+                                                      ),
+                                                    ),
+                                                  );
+
+                                                  return;
+                                                }
+
+                                                context
+                                                    .read<ClientJobDetailBloc>()
+                                                    .add(
+                                                      ClientBookingStatusUpdateEvent(
+                                                        jobId: jobId,
+                                                        workerId: workerId,
+                                                        statusType: 'Await',
+                                                      ),
+                                                    );
+                                              },
+                                        borderRadius: BorderRadius.circular(8),
+                                        child: Container(
+                                          padding: const EdgeInsets.symmetric(
+                                            vertical: 4,
+                                            horizontal: 8,
+                                          ),
+                                          alignment: Alignment.center,
+                                          decoration: BoxDecoration(
+                                            color: _editGreen,
+                                            borderRadius: BorderRadius.circular(
+                                              8,
+                                            ),
+                                          ),
+                                          child: const Text(
+                                            'Book Now',
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                            ),
+                                          ),
                                         ),
                                       ),
+                                      // IconButton(
+                                      //   onPressed: () {
+                                      //     // TODO: Chat
+                                      //   },
+                                      //   icon: const Icon(
+                                      //     Icons.chat_bubble_outline,
+                                      //     color: _secondary,
+                                      //   ),
+                                      // ),
                                     ],
                                   ),
                                 ),
                               );
                             },
                           ),
-
                         const SizedBox(height: 20),
-
                         SizedBox(
                           width: double.infinity,
                           child: ElevatedButton.icon(
                             onPressed: () {},
                             icon: const Icon(Icons.edit_outlined),
-                            label: const Text("Edit Job Post"),
+                            label: const Text('Edit Job Post'),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: _editGreen,
                               foregroundColor: Colors.white,
@@ -443,9 +496,7 @@ class _JobDetailWidgetState extends State<JobDetailWidget> {
                             ),
                           ),
                         ),
-
                         const SizedBox(height: 14),
-
                         SizedBox(
                           width: double.infinity,
                           child: OutlinedButton(
@@ -459,7 +510,7 @@ class _JobDetailWidgetState extends State<JobDetailWidget> {
                               ),
                             ),
                             child: const Text(
-                              "Close Job",
+                              'Close Job',
                               style: TextStyle(fontWeight: FontWeight.bold),
                             ),
                           ),
@@ -467,7 +518,6 @@ class _JobDetailWidgetState extends State<JobDetailWidget> {
                       ],
                     ),
                   ),
-
                   const SizedBox(height: 30),
                 ],
               ),
@@ -476,6 +526,21 @@ class _JobDetailWidgetState extends State<JobDetailWidget> {
         );
       },
     );
+  }
+
+  String _getInitials(String? fullName) {
+    if (fullName == null || fullName.trim().isEmpty) {
+      return '';
+    }
+
+    return fullName
+        .trim()
+        .split(RegExp(r'\s+'))
+        .where((value) => value.isNotEmpty)
+        .map((value) => value[0])
+        .take(2)
+        .join()
+        .toUpperCase();
   }
 
   Widget _meta(IconData icon, String text) {
@@ -488,9 +553,9 @@ class _JobDetailWidgetState extends State<JobDetailWidget> {
           child: Text(
             text,
             style: const TextStyle(
-              fontSize: 14,
-              color: _secondary,
-              height: 1.4,
+              fontSize: 12,
+              color: Color(0xFF43474E),
+              fontWeight: FontWeight.w400,
             ),
           ),
         ),
@@ -539,7 +604,7 @@ class _JobDetailWidgetState extends State<JobDetailWidget> {
   Widget _session(String title, String time) {
     return Container(
       decoration: BoxDecoration(
-        color: const Color(0xffF4F7FB),
+        color: const Color(0xFFF4F7FB),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
@@ -562,8 +627,9 @@ class _JobDetailWidgetState extends State<JobDetailWidget> {
                   Text(
                     title,
                     style: const TextStyle(
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w500,
                       fontSize: 14,
+                      color: Color(0xFF101828),
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -575,7 +641,14 @@ class _JobDetailWidgetState extends State<JobDetailWidget> {
                         color: _secondary,
                       ),
                       const SizedBox(width: 6),
-                      Text(time, style: const TextStyle(color: _secondary)),
+                      Text(
+                        time,
+                        style: const TextStyle(
+                          color: Color(0xFF4A5565),
+                          fontWeight: FontWeight.w400,
+                          fontSize: 12,
+                        ),
+                      ),
                     ],
                   ),
                 ],
