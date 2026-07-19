@@ -41,6 +41,7 @@ abstract class JobsApi {
   Future<BookingStatusUpdateResponseModel> clientBookingStatusUpdate({
     required int jobId,
     required int workerId,
+    required int clientId,
     required String statusType,
   });
 }

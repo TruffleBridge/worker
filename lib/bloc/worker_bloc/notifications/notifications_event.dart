@@ -14,9 +14,11 @@ final class NotificationRequested extends NotificationEvent {
 final class NotificationBookingApproved extends NotificationEvent {
   final int jobId;
   final int workerId;
+  final int clientId;
 
   const NotificationBookingApproved({
     required this.jobId,
+    required this.clientId,
     required this.workerId,
   });
 
@@ -24,21 +26,25 @@ final class NotificationBookingApproved extends NotificationEvent {
   List<Object?> get props => [
     jobId,
     workerId,
+    clientId,
   ];
 }
 
 final class NotificationBookingDeclined extends NotificationEvent {
   final int jobId;
   final int workerId;
+  final int clientId;
 
   const NotificationBookingDeclined({
     required this.jobId,
     required this.workerId,
+    required this.clientId,
   });
 
   @override
   List<Object?> get props => [
     jobId,
     workerId,
+    clientId,
   ];
 }

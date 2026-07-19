@@ -54,6 +54,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     await _updateBookingStatus(
       jobId: event.jobId,
       workerId: event.workerId,
+      clientId: event.clientId,
       statusType: 'Confirmed',
       emit: emit,
     );
@@ -66,6 +67,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     await _updateBookingStatus(
       jobId: event.jobId,
       workerId: event.workerId,
+      clientId: event.clientId,
       statusType: 'Rejected',
       emit: emit,
     );
@@ -74,6 +76,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
   Future<void> _updateBookingStatus({
     required int jobId,
     required int workerId,
+    required int clientId,
     required String statusType,
     required Emitter<NotificationState> emit,
   }) async {
@@ -91,6 +94,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
         jobId: jobId,
         workerId: workerId,
         statusType: statusType,
+        clientId: clientId,
       );
 
       emit(

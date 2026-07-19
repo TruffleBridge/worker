@@ -411,58 +411,63 @@ class _JobDetailWidgetState extends State<JobDetailWidget> {
                                           ],
                                         ),
                                       ),
-                                      InkWell(
-                                        onTap: isBooking
-                                            ? null
-                                            : () {
-                                                final jobId = job?.id;
+                                      if (applicant.bookingAction ==
+                                          'allowBooking')
+                                        InkWell(
+                                          onTap: isBooking
+                                              ? null
+                                              : () {
+                                                  final jobId = job?.id;
 
-                                                if (jobId == null ||
-                                                    workerId == null) {
-                                                  ScaffoldMessenger.of(
-                                                    context,
-                                                  ).showSnackBar(
-                                                    const SnackBar(
-                                                      content: Text(
-                                                        'Job ID or Worker ID not found',
-                                                      ),
-                                                    ),
-                                                  );
-
-                                                  return;
-                                                }
-
-                                                context
-                                                    .read<ClientJobDetailBloc>()
-                                                    .add(
-                                                      ClientBookingStatusUpdateEvent(
-                                                        jobId: jobId,
-                                                        workerId: workerId,
-                                                        statusType: 'Await',
+                                                  if (jobId == null ||
+                                                      workerId == null) {
+                                                    ScaffoldMessenger.of(
+                                                      context,
+                                                    ).showSnackBar(
+                                                      const SnackBar(
+                                                        content: Text(
+                                                          'Job ID or Worker ID not found',
+                                                        ),
                                                       ),
                                                     );
-                                              },
-                                        borderRadius: BorderRadius.circular(8),
-                                        child: Container(
-                                          padding: const EdgeInsets.symmetric(
-                                            vertical: 4,
-                                            horizontal: 8,
+
+                                                    return;
+                                                  }
+
+                                                  context
+                                                      .read<
+                                                        ClientJobDetailBloc
+                                                      >()
+                                                      .add(
+                                                        ClientBookingStatusUpdateEvent(
+                                                          jobId: jobId,
+                                                          workerId: workerId,
+                                                          statusType: 'Await',
+                                                        ),
+                                                      );
+                                                },
+                                          borderRadius: BorderRadius.circular(
+                                            8,
                                           ),
-                                          alignment: Alignment.center,
-                                          decoration: BoxDecoration(
-                                            color: _editGreen,
-                                            borderRadius: BorderRadius.circular(
-                                              8,
+                                          child: Container(
+                                            padding: const EdgeInsets.symmetric(
+                                              vertical: 4,
+                                              horizontal: 8,
                                             ),
-                                          ),
-                                          child: const Text(
-                                            'Book Now',
-                                            style: TextStyle(
-                                              color: Colors.white,
+                                            alignment: Alignment.center,
+                                            decoration: BoxDecoration(
+                                              color: _editGreen,
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                            ),
+                                            child: const Text(
+                                              'Book Now',
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                              ),
                                             ),
                                           ),
                                         ),
-                                      ),
                                       // IconButton(
                                       //   onPressed: () {
                                       //     // TODO: Chat

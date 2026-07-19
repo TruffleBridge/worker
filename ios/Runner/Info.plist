@@ -3,9 +3,23 @@
 <plist version="1.0">
 <dict>
 
+	<!-- Location Permission -->
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>This app needs location access to get your current location.</string>
 
+	<!-- Camera Permission -->
+	<key>NSCameraUsageDescription</key>
+	<string>This app uses the camera to capture profile photos and upload documents.</string>
+
+	<!-- Photo Library Permission -->
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>This app needs access to your photo library so you can select photos and documents to upload.</string>
+
+	<!-- Save to Photo Library Permission -->
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>This app needs permission to save photos to your photo library when required.</string>
+
+	<!-- Allow HTTP Requests -->
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>
@@ -52,7 +66,6 @@
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
 		<false/>
-
 		<key>UISceneConfigurations</key>
 		<dict>
 			<key>UIWindowSceneSessionRoleApplication</key>

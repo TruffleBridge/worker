@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:nimora_worker/core/theme/app_theme.dart';
 import 'package:nimora_worker/presentation/widgets/client_widgets/client_profile/client_profile_account_settings/client_profile_account_settings_widget.dart';
 import 'package:nimora_worker/presentation/widgets/client_widgets/client_profile/client_profile_documents/client_profile_documents_widget.dart';
 import 'package:nimora_worker/presentation/widgets/client_widgets/client_profile/client_profile_help_&_support/help_and_support_widget.dart';
 import 'package:nimora_worker/presentation/widgets/client_widgets/client_profile/client_profile_notification/client_profile_notification_widget.dart';
 import 'package:nimora_worker/presentation/widgets/client_widgets/client_profile/profile_menu_item.dart';
+import 'package:nimora_worker/routes/app_router.dart';
 
 import '../../../../bloc/client_bloc/client_profile/client_profile_bloc.dart';
 import '../../../../bloc/client_bloc/client_profile/client_profile_event.dart';
@@ -25,19 +28,13 @@ class ClientProfileWidget extends StatelessWidget {
           backgroundColor: bgColor,
           body: SafeArea(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 16,
-                vertical: 20,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
                     "My Profile",
-                    style: TextStyle(
-                      fontSize: 28,
-                      fontWeight: FontWeight.w700,
-                    ),
+                    style: TextStyle(fontSize: 28, fontWeight: FontWeight.w700),
                   ),
 
                   const SizedBox(height: 20),
@@ -58,7 +55,7 @@ class ClientProfileWidget extends StatelessWidget {
                           icon: Icons.credit_card_outlined,
                           title: "Payment Methods",
                           subtitle:
-                          "${state.paymentCards.length} card(s) saved",
+                              "${state.paymentCards.length} card(s) saved",
                           onTap: () {
                             Navigator.push(
                               context,
@@ -84,7 +81,8 @@ class ClientProfileWidget extends StatelessWidget {
                               MaterialPageRoute(
                                 builder: (_) => BlocProvider.value(
                                   value: context.read<ProfileBloc>(),
-                                  child: const ClientProfileNotificationWidget(),
+                                  child:
+                                      const ClientProfileNotificationWidget(),
                                 ),
                               ),
                             );
@@ -97,7 +95,7 @@ class ClientProfileWidget extends StatelessWidget {
                           icon: Icons.shield_outlined,
                           title: "NDIS Documents",
                           subtitle:
-                          "${state.documents.length} document(s) uploaded",
+                              "${state.documents.length} document(s) uploaded",
                           onTap: () {
                             Navigator.push(
                               context,
@@ -121,8 +119,7 @@ class ClientProfileWidget extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (_) =>
-                                const HelpAndSupportWidget(),
+                                builder: (_) => const HelpAndSupportWidget(),
                               ),
                             );
                           },
@@ -140,7 +137,8 @@ class ClientProfileWidget extends StatelessWidget {
                               MaterialPageRoute(
                                 builder: (_) => BlocProvider.value(
                                   value: context.read<ProfileBloc>(),
-                                  child: const ClientProfileAccountSettingsWidget(),
+                                  child:
+                                      const ClientProfileAccountSettingsWidget(),
                                 ),
                               ),
                             );
@@ -157,14 +155,9 @@ class ClientProfileWidget extends StatelessWidget {
                     height: 55,
                     child: OutlinedButton.icon(
                       onPressed: () {
-                        context.read<ProfileBloc>().add(
-                          SignOutEvent(),
-                        );
+                        _showLogoutDialog(context);
                       },
-                      icon: const Icon(
-                        Icons.logout,
-                        color: Colors.red,
-                      ),
+                      icon: const Icon(Icons.logout, color: Colors.red),
                       label: const Text(
                         "Sign Out",
                         style: TextStyle(
@@ -173,9 +166,7 @@ class ClientProfileWidget extends StatelessWidget {
                         ),
                       ),
                       style: OutlinedButton.styleFrom(
-                        side: BorderSide(
-                          color: Colors.red.shade200,
-                        ),
+                        side: BorderSide(color: Colors.red.shade200),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(18),
                         ),
@@ -190,10 +181,7 @@ class ClientProfileWidget extends StatelessWidget {
                       children: [
                         const Text(
                           "Nimora v1.0",
-                          style: TextStyle(
-                            color: Colors.grey,
-                            fontSize: 12,
-                          ),
+                          style: TextStyle(color: Colors.grey, fontSize: 12),
                         ),
                         const SizedBox(height: 4),
                         GestureDetector(
@@ -219,10 +207,7 @@ class ClientProfileWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildProfileCard(
-      BuildContext context,
-      ProfileState state,
-      ) {
+  Widget _buildProfileCard(BuildContext context, ProfileState state) {
     return Material(
       color: Colors.white,
       elevation: 2,
@@ -235,9 +220,7 @@ class ClientProfileWidget extends StatelessWidget {
               children: [
                 CircleAvatar(
                   radius: 34,
-                  backgroundImage: AssetImage(
-                    state.profileImage,
-                  ),
+                  backgroundImage: AssetImage(state.profileImage),
                 ),
 
                 Positioned(
@@ -248,10 +231,7 @@ class ClientProfileWidget extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: primaryColor,
                       shape: BoxShape.circle,
-                      border: Border.all(
-                        color: Colors.white,
-                        width: 2,
-                      ),
+                      border: Border.all(color: Colors.white, width: 2),
                     ),
                     child: const Icon(
                       Icons.camera_alt,
@@ -281,10 +261,7 @@ class ClientProfileWidget extends StatelessWidget {
 
                   Text(
                     "NDIS Participant • ${state.location}",
-                    style: TextStyle(
-                      color: Colors.grey.shade600,
-                      fontSize: 13,
-                    ),
+                    style: TextStyle(color: Colors.grey.shade600, fontSize: 13),
                   ),
 
                   const SizedBox(height: 10),
@@ -312,11 +289,7 @@ class ClientProfileWidget extends StatelessWidget {
 
                       const SizedBox(width: 8),
 
-                      const Icon(
-                        Icons.verified,
-                        color: primaryColor,
-                        size: 18,
-                      ),
+                      const Icon(Icons.verified, color: primaryColor, size: 18),
                     ],
                   ),
                 ],
@@ -324,6 +297,45 @@ class ClientProfileWidget extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  void _showLogoutDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppDimensions.radiusXL),
+        ),
+        title: Text('Logout', style: NdisThemeStyle.headlineMedium),
+        content: Text(
+          'Are you sure you want to logout?',
+          style: NdisThemeStyle.bodyMedium,
+        ),
+        actions: [
+          // TextButton(
+          //   onPressed: () => Navigator.of(ctx).pop(),
+          //   child: const Text('Cancel'),
+          // ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.of(ctx).pop();
+              context.go(AppRoutes.splash);
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.redAccent,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(AppDimensions.radiusM),
+              ),
+              elevation: 0,
+            ),
+            child: Text(
+              'Logout',
+              style: NdisThemeStyle.labelLarge.copyWith(color: Colors.white),
+            ),
+          ),
+        ],
       ),
     );
   }
