@@ -82,7 +82,7 @@ class WorkerSignInSplashWidget extends StatelessWidget {
                             ),
                             const SizedBox(height: 20),
                             const Text(
-                              'Care Support',
+                              'Nimora',
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 32,

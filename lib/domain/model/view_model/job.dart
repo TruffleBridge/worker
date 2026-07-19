@@ -266,7 +266,7 @@ class Job extends Equatable {
     return Job(
       id: (json['id'] ?? json['_id'] ?? '').toString(),
       title: json['title'] as String? ?? 'Untitled',
-      company: json['company'] as String? ?? 'Care Support',
+      company: json['company'] as String? ?? 'Nimora',
       location: locationStr,
       distanceKm: _toDouble(json['distanceKm'] ?? 0),
       hourlyRate: _toDouble(json['hourlyRate'] ?? 0),

@@ -79,12 +79,14 @@ class JobsRepositoryImpl extends JobsRepository {
   Future<BookingStatusUpdateResponseModel> clientBookingStatusUpdate({
     required int jobId,
     required int workerId,
+    required int clientId,
     required String statusType,
   }) async {
     return jobsApi.clientBookingStatusUpdate(
       jobId: jobId,
       workerId: workerId,
       statusType: statusType,
+      clientId: clientId,
     );
   }
 }

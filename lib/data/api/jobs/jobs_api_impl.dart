@@ -141,12 +141,18 @@ class JobsApiImpl extends JobsApi {
   Future<BookingStatusUpdateResponseModel> clientBookingStatusUpdate({
     required int jobId,
     required int workerId,
+    required int clientId,
     required String statusType,
   }) async {
     try {
       final response = await dio.post(
         '/api/booking/bookingStatusUpdate',
-        data: {"jobId": jobId, "workerId": workerId, "status": statusType},
+        data: {
+          "jobId": jobId,
+          "workerId": workerId,
+          "status": statusType,
+          if (clientId != 0) "clientId": clientId,
+        },
       );
 
       return BookingStatusUpdateResponseModel.fromJson(

@@ -53,7 +53,7 @@ class NotificationListData {
 
 class NotificationListResult {
   int? id;
-  int? clientId;
+  int? cientId;
   String? profilePicture;
   String? clientName;
   String? jobTitle;
@@ -66,7 +66,7 @@ class NotificationListResult {
 
   NotificationListResult(
       {this.id,
-        this.clientId,
+        this.cientId,
         this.profilePicture,
         this.clientName,
         this.jobTitle,
@@ -79,7 +79,7 @@ class NotificationListResult {
 
   NotificationListResult.fromJson(Map<String, dynamic> json) {
     id = json['id'];
-    clientId = json['clientId'];
+    cientId = json['cientId'];
     profilePicture = json['profilePicture'];
     clientName = json['clientName'];
     jobTitle = json['jobTitle'];
@@ -94,7 +94,7 @@ class NotificationListResult {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['id'] = id;
-    data['clientId'] = clientId;
+    data['cientId'] = cientId;
     data['profilePicture'] = profilePicture;
     data['clientName'] = clientName;
     data['jobTitle'] = jobTitle;

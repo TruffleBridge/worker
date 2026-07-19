@@ -77,6 +77,7 @@ class ClientJobDetailBloc
       final response = await jobsRepository.clientBookingStatusUpdate(
         jobId: event.jobId,
         workerId: event.workerId,
+        clientId: 0,
         statusType: event.statusType,
       );
 

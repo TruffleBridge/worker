@@ -171,13 +171,13 @@ class LabeledField extends StatelessWidget {
           onTap: onTap,
           maxLines: maxLines,
           style: NdisThemeStyle.bodyMedium.copyWith(
-            color: const Color(0xFF99A1AF),
+            color:  Colors.black,
           ),
           maxLength: maxLength,
           decoration: InputDecoration(
             hintText: hint,
             counterText: '',
-            hintStyle: NdisThemeStyle.hint,
+            hintStyle: NdisThemeStyle.hint.copyWith(),
             prefixIcon: icon != null
                 ? Icon(icon, size: 18, color: AppColors.textHint)
                 : null,

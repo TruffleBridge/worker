@@ -110,7 +110,7 @@ class NotificationsView extends StatelessWidget {
         const SizedBox(height: 12),
         ...state.notifications.map((notification) {
           final jobId = notification.id;
-          final clientId = notification.clientId;
+          final clientId = notification.cientId;
 
           // TODO: Replace with actual logged-in worker ID.
           const workerId = 2;
