@@ -22,6 +22,15 @@ class WorkerSignInSplashWidget extends StatelessWidget {
     bloc.add(const LoginSubmitted());
   }
 
+  void _onGoogleSignIn(BuildContext context) {
+    final bloc = context.read<WorkerLoginBloc>();
+
+    bloc.add(
+      const WorkerGoogleLoginSubmitted(),
+    );
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<WorkerLoginBloc, WorkerLoginState>(

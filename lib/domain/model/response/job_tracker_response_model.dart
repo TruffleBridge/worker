@@ -229,7 +229,7 @@ class Job {
   String? title;
   String? description;
   String? category;
-  int? hourlyRate;
+  String? hourlyRate;
   String? shift;
   String? hoursPerDay;
   String? serviceRequirement;
@@ -259,7 +259,7 @@ class Job {
     category = json['category'];
     hourlyRate = json['hourlyRate'];
     shift = json['shift'];
-    hoursPerDay = json['hoursPerDay'];
+    hourlyRate = json['hourlyRate'];
     serviceRequirement = json['serviceRequirement'];
     postedBy = json['postedBy'];
     createdAt = json['createdAt'];

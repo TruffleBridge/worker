@@ -6,4 +6,8 @@ abstract class LoginRepository {
     required String userName,
     required String password,
   });
+
+  Future<UserModel> googleLogin({
+    required String idToken,
+  });
 }

@@ -193,12 +193,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:nimora_worker/bloc/worker_bloc/login/login_bloc.dart';
 import 'package:nimora_worker/core/constants/assets_images.dart';
 import 'package:nimora_worker/core/theme/app_theme.dart';
 import 'package:nimora_worker/presentation/widgets/components/sign_is_success_dialog.dart';
 import 'package:nimora_worker/presentation/widgets/worker_widgets/sign_in_splash/social_buttons.dart';
 import 'package:nimora_worker/routes/app_router.dart';
+
+import '../../../../bloc/client_bloc/login/login_bloc.dart';
 
 class ClientSignInSplashWidget extends StatelessWidget {
   const ClientSignInSplashWidget({super.key});
@@ -213,18 +214,26 @@ class ClientSignInSplashWidget extends StatelessWidget {
   //   bloc.add(const ClientLoginSubmitted() as LoginEvent);
   // }
   void _onSocialButtonTap(BuildContext context) {
-    final bloc = context.read<WorkerLoginBloc>();
-    bloc.add(const LoginEmailChanged(_email));
-    bloc.add(const LoginPasswordChanged(_password));
-    bloc.add(const LoginSubmitted());
+    final bloc = context.read<LoginBloc>();
+    bloc.add(const ClientLoginEmailChanged(_email));
+    bloc.add(const ClientLoginPasswordChanged(_password));
+    bloc.add(const ClientLoginSubmitted());
+  }
+
+  void _onGoogleSignIn(BuildContext context) {
+    final bloc = context.read<LoginBloc>();
+
+    bloc.add(
+      const ClientGoogleLoginSubmitted(),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<WorkerLoginBloc, WorkerLoginState>(
+    return BlocConsumer<LoginBloc, LoginState>(
       listener: (context, state) {
         if (state is LoginOnLoadedState) {
-          if (state.status == LoginStatus.success) {
+          if (state.status == ClientLoginStatus.success) {
             showSignInSuccessDialog(
               context,
               onComplete: () {
@@ -233,7 +242,7 @@ class ClientSignInSplashWidget extends StatelessWidget {
               },
             );
           }
-          if (state.status == LoginStatus.failure) {
+          if (state.status == ClientLoginStatus.failure) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(state.errorMessage ?? 'Login failed'),
@@ -249,7 +258,7 @@ class ClientSignInSplashWidget extends StatelessWidget {
       },
       builder: (context, state) {
         final isLoading =
-            state is LoginOnLoadedState && state.status == LoginStatus.loading;
+            state is LoginOnLoadedState && state.status == ClientLoginStatus.loading;
         return Scaffold(
           body: Stack(
             fit: StackFit.expand,
@@ -297,7 +306,7 @@ class ClientSignInSplashWidget extends StatelessWidget {
                         isLoading: isLoading,
                         onTap: isLoading
                             ? () {}
-                            : () => _onSocialButtonTap(context),
+                            : () => _onGoogleSignIn(context),
                       ),
 
                       const SizedBox(height: 12),

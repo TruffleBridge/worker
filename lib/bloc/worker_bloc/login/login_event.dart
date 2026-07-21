@@ -48,3 +48,7 @@ class LoginWithGooglePressed extends WorkerLoginEvent {
 class LoginWithFacebookPressed extends WorkerLoginEvent {
   const LoginWithFacebookPressed();
 }
+
+class WorkerGoogleLoginSubmitted extends WorkerLoginEvent {
+  const WorkerGoogleLoginSubmitted();
+}

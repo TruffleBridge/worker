@@ -43,21 +43,25 @@ class JobsApiImpl extends JobsApi {
     String? search,
   }) async {
     try {
+      final body = {
+        'page': page,
+        'limit': limit,
+        'search': search ?? '',
+        'applicationStatusId': ?applicationStatusId,
+      };
+
       final response = await dio.post(
         '/api/job/jobTrackerList',
-        data: {
-          'page': page,
-          'limit': limit,
-          'search': search,
-          'applicationStatusId': applicationStatusId,
-        },
+        data: body,
       );
 
       return JobTrackerResponseModel.fromJson(
         response.data as Map<String, dynamic>,
       );
     } on DioException catch (e) {
-      throw Exception(e.response?.data?['message'] ?? 'Failed to load jobs');
+      throw Exception(
+        e.response?.data?['message'] ?? 'Failed to load jobs',
+      );
     }
   }
 

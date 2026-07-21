@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:nimora_worker/bloc/worker_bloc/login/login_bloc.dart';
 import 'package:nimora_worker/presentation/views/client_views/sign_in/sign_in_splash_view.dart';
 
 import '../../../../bloc/client_bloc/login/login_bloc.dart';
@@ -43,10 +42,10 @@ class ClientSignInSplashPage extends StatelessWidget {
         //   )..add(ClientLoginOnLoadEvent()),
         // ),
         BlocProvider(
-          create: (_) => WorkerLoginBloc(
+          create: (_) => LoginBloc(
             loginRepository: loginRepository,
             tokenStorage: AppDependencies.tokenStorage,
-          )..add(LoginOnLoadEvent()),
+          )..add(ClientLoginOnLoadEvent()),
         ),
       ],
       child: const ClientSignInSplashView(),

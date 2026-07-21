@@ -48,3 +48,7 @@ class ClientLoginPasswordChanged extends LoginEvent {
 class ClientLoginSubmitted extends LoginEvent {
   const ClientLoginSubmitted();
 }
+
+class ClientGoogleLoginSubmitted extends LoginEvent {
+  const ClientGoogleLoginSubmitted();
+}

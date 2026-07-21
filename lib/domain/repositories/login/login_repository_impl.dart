@@ -14,4 +14,13 @@ class LoginRepositoryImpl extends LoginRepository {
   }) {
     return loginApi.loginResponseModel(userName: userName, password: password);
   }
+
+  @override
+  Future<UserModel> googleLogin({
+    required String idToken,
+  }) {
+    return loginApi.googleLogin(
+      idToken: idToken,
+    );
+  }
 }

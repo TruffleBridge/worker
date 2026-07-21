@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "484075993333",
+    "project_id": "sign-in-e3c1e",
+    "storage_bucket": "sign-in-e3c1e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:484075993333:android:c56fa6c107ffee3a62edbc",
+        "android_client_info": {
+          "package_name": "com.example.nimora_worker"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "484075993333-0mteo673r20j6evq2lq88bmr64q2rp5p.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.nimora_worker",
+            "certificate_hash": "fd7655a7a13c1e8e676f9a0fd0e1991833d6fc7b"
+          }
+        },
+        {
+          "client_id": "484075993333-11uisgpm2h9b14qqefidvfcs0a5aoiph.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDv0ye6X6wl5k7WkNtz6Y53YYj24cw4KeQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "484075993333-11uisgpm2h9b14qqefidvfcs0a5aoiph.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "484075993333-bevm59q5msr4svkvpedcg2hjpeprcqd6.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.trufflebridge.nimora"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

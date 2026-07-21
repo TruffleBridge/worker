@@ -155,6 +155,8 @@ import 'package:nimora_worker/domain/repositories/login/login_repository.dart';
 import 'package:nimora_worker/domain/model/response/user_model.dart';
 import 'package:nimora_worker/infrastructure/storage/token_storage/token_storage.dart';
 
+import '../../../core/di/google_auth_service/google_auth_service.dart';
+
 part 'login_event.dart';
 
 part 'login_state.dart';
@@ -170,6 +172,7 @@ class WorkerLoginBloc extends Bloc<WorkerLoginEvent, WorkerLoginState> {
     on<LoginRememberMeToggled>(_onRememberMeToggled);
     on<LoginPasswordVisibilityToggled>(_onPasswordVisibilityToggled);
     on<LoginSubmitted>(_onSubmitted);
+    on<WorkerGoogleLoginSubmitted>(_onGoogleLoginSubmitted);
   }
 
   FutureOr<void> _onLoginOnLoadEvent(
@@ -253,6 +256,50 @@ class WorkerLoginBloc extends Bloc<WorkerLoginEvent, WorkerLoginState> {
     } catch (e) {
       emit(
         castState.copyWith(
+          status: LoginStatus.failure,
+          errorMessage: e.toString(),
+        ),
+      );
+    }
+  }
+
+  Future<void> _onGoogleLoginSubmitted(
+      WorkerGoogleLoginSubmitted event,
+      Emitter<WorkerLoginState> emit,
+      ) async {
+    final state = this.state as LoginOnLoadedState;
+
+    emit(
+      state.copyWith(
+        status: LoginStatus.loading,
+        errorMessage: null,
+      ),
+    );
+
+    try {
+      final idToken = await GoogleAuthService().signIn();
+
+      if (idToken == null) {
+        emit(
+          state.copyWith(
+            status: LoginStatus.initial,
+          ),
+        );
+        return;
+      }
+
+      await loginRepository.googleLogin(
+        idToken: idToken,
+      );
+
+      emit(
+        state.copyWith(
+          status: LoginStatus.success,
+        ),
+      );
+    } catch (e) {
+      emit(
+        state.copyWith(
           status: LoginStatus.failure,
           errorMessage: e.toString(),
         ),

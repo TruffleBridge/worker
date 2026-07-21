@@ -263,8 +263,9 @@ class Job extends Equatable {
     // ── hoursPerWeek from hoursPerDay ───────────────────────────────────────
     final hoursPerDay = _toDouble(json['hoursPerDay'] ?? 0);
 
+    final jobJson = json['job'];
     return Job(
-      id: (json['id'] ?? json['_id'] ?? '').toString(),
+      id: (json['id'] ?? jobJson?['id'] ?? json['_id'] ?? '').toString(),
       title: json['title'] as String? ?? 'Untitled',
       company: json['company'] as String? ?? 'Nimora',
       location: locationStr,

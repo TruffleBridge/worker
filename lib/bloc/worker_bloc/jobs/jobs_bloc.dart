@@ -108,46 +108,59 @@ class JobsBloc extends Bloc<JobsEvent, JobsState> {
     emit(currentState.copyWith(selectedJob: event.job));
   }
 
+
   Future<void> _onTabChanged(
-    JobsTabChanged event,
-    Emitter<JobsState> emit,
-  ) async {
-    // final currentState = state;
-    //
-    // if (currentState is! JobsSuccess) return;
-    //
-    // try {
-    //   final response = event.tab == JobsTab.allJobs
-    //       ? await _jobsRepository.jobsRequest(
-    //           jobsNearbyRequestModel: JobsNearbyRequestModel(
-    //             page: 1,
-    //             limit: 10,
-    //             search: currentState.query,
-    //             locationType: 'current',
-    //             latitude: 13.0827,
-    //             longitude: 80.2707,
-    //             address: 'Chennai, Tamil Nadu',
-    //             radiusKm: 25,
-    //           ),
-    //         )
-    //       : await _jobsRepository.jobTrackerRequest(page: 1, limit: 10);
-    //
-    //   final jobs =
-    //       response.data?.jobs?.map((e) => Job.fromJson(e.toJson())).toList() ??
-    //       [];
-    //
-    //   emit(
-    //     currentState.copyWith(
-    //       selectedTab: event.tab,
-    //       jobs: jobs,
-    //       filteredJobs: jobs,
-    //       selectedJob: null,
-    //     ),
-    //   );
-    // } catch (e) {
-    //   emit(JobsError(e.toString()));
-    // }
+      JobsTabChanged event,
+      Emitter<JobsState> emit,
+      ) async {
+    final currentState = state;
+
+    if (currentState is! JobsSuccess) return;
+
+    try {
+      List<Job> jobs = [];
+      if (event.tab == JobsTab.allJobs) {
+        final response = await jobsRepository.jobsRequest(
+          jobsNearbyRequestModel: JobsNearbyRequestModel(
+            page: 1,
+            limit: 10,
+            search: currentState.query,
+            locationType: 'current',
+            latitude: 13.0827,
+            longitude: 80.2707,
+            address: 'Chennai, Tamil Nadu',
+            radiusKm: 25,
+          ),
+        );
+        jobs =
+            response.data?.jobs
+                ?.map((e) => Job.fromJson(e.toJson()))
+                .toList() ??
+                [];
+      } else {
+        final response = await jobsRepository.jobTrackerRequest(
+          page: 1,
+          limit: 10,
+        );
+        jobs =
+            response.data?.jobs
+                ?.map((e) => Job.fromJson(e.toJson()))
+                .toList() ??
+                [];
+      }
+      emit(
+        currentState.copyWith(
+          selectedTab: event.tab,
+          jobs: jobs,
+          filteredJobs: jobs,
+          selectedJob: null,
+        ),
+      );
+    } catch (e) {
+      emit(JobsError(e.toString()));
+    }
   }
+
 
   Future<void> _onDetailRequested(
     JobDetailRequested event,
@@ -156,6 +169,7 @@ class JobsBloc extends Bloc<JobsEvent, JobsState> {
     emit(const JobDetailLoading());
 
     try {
+
       final response = await jobsRepository.jobDetailRequest(
         jobId: int.parse(event.jobId),
         latitude: event.latitude,

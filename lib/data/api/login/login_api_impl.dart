@@ -52,4 +52,42 @@ class LoginApiImpl extends LoginApi {
       );
     }
   }
+
+  @override
+  Future<UserModel> googleLogin({
+    required String idToken,
+  }) async {
+    try {
+      final response = await dio.post(
+        '/api/auth/google/token',
+        data: {
+          'idToken': idToken,
+        },
+      );
+
+      final body = Map<String, dynamic>.from(
+        response.data as Map<String, dynamic>,
+      );
+
+      final data = body['data'] as Map<String, dynamic>?;
+
+      final token =
+          data?['accessToken'] ??
+              data?['access_token'] ??
+              data?['token'];
+
+      if (token != null && token.toString().isNotEmpty) {
+        await tokenStorage.saveToken(token.toString());
+      }
+
+      debugPrint('Google Login Response => $body');
+
+      return UserModel.fromJson(body);
+    } on DioException catch (e) {
+      throw Exception(
+        e.response?.data?['message'] ??
+            'Google login failed',
+      );
+    }
+  }
 }

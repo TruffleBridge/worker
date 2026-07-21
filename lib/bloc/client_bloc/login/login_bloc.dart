@@ -2,21 +2,25 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:nimora_worker/core/enums/login_status.dart';
 
+import '../../../core/di/google_auth_service/google_auth_service.dart';
 import '../../../domain/repositories/login/login_repository.dart';
+import '../../../infrastructure/storage/token_storage/token_storage.dart';
 
 part 'login_event.dart';
 part 'login_state.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
   final LoginRepository loginRepository;
+  final TokenStorage tokenStorage;
 
-  LoginBloc({required this.loginRepository}) : super(LoginState()) {
+  LoginBloc({required this.loginRepository, required this.tokenStorage}) : super(LoginState()) {
     on<ClientLoginOnLoadEvent>(_onLoad);
     on<ClientLoginEmailChanged>(_onEmailChanged);
     on<ClientLoginPasswordChanged>(_onPasswordChanged);
     on<ClientLoginPhoneChanged>(_onPhoneChanged);
     on<ClientLoginWhatsAppChanged>(_onWhatsAppChanged);
     on<ClientLoginSubmitted>(_onSubmitted);
+    on<ClientGoogleLoginSubmitted>(_onGoogleLoginSubmitted);
   }
 
   void _onLoad(
@@ -100,5 +104,50 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         status: LoginStatus.otpSent,
       ),
     );
+  }
+
+//   Google Sign in
+  Future<void> _onGoogleLoginSubmitted(
+      ClientGoogleLoginSubmitted event,
+      Emitter<LoginState> emit,
+      ) async {
+    final state = this.state as LoginOnLoadedState;
+
+    emit(
+      state.copyWith(
+        status: LoginStatus.loading,
+        errorMessage: null,
+      ),
+    );
+
+    try {
+      final idToken = await GoogleAuthService().signIn();
+
+      if (idToken == null) {
+        emit(
+          state.copyWith(
+            status: LoginStatus.initial,
+          ),
+        );
+        return;
+      }
+
+      await loginRepository.googleLogin(
+        idToken: idToken,
+      );
+
+      emit(
+        state.copyWith(
+          status: LoginStatus.success,
+        ),
+      );
+    } catch (e) {
+      emit(
+        state.copyWith(
+          status: LoginStatus.failure,
+          errorMessage: e.toString(),
+        ),
+      );
+    }
   }
 }
